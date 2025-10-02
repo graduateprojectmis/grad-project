@@ -8,6 +8,7 @@ import requests
 import json
 from bs4 import BeautifulSoup
 import time
+import os
 from urllib.parse import urljoin
 
 def scrape_airpods_manual():
@@ -83,6 +84,9 @@ if __name__ == '__main__':
     
     if airpods_data:
         output_filename = 'output/json/airpods_manual_data.json'
+        
+        os.makedirs(os.path.dirname(output_filename), exist_ok=True)
+        
         with open(output_filename, 'w', encoding='utf-8') as f:
             json.dump(airpods_data, f, ensure_ascii=False, indent=4)
         
