@@ -26,3 +26,12 @@ huggingface-hub>=0.17.0
 
 # Environment management
 python-dotenv>=1.0.0
+
+# text splitting
+langchain==0.3.27
+langchain-core==0.3.77
+langchain-text-splitters==0.3.11
+langsmith==0.4.31
+
+# OpenAI API
+openai==0.28.0
