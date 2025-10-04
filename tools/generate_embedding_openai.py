@@ -63,7 +63,7 @@ def split_text(structured_data, chunk_size=600, chunk_overlap=30):
 
 if __name__ == "__main__":
     input_file = "output/json/airpods_manual_data.json"
-    output_file = "output/json/text_embedding.json"
+    output_file = "output/json/text_embedding_openai.json"
 
     # 讀取結構化資料
     with open(input_file, "r", encoding="utf-8") as f:
