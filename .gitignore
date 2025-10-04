@@ -111,3 +111,5 @@ ENV/
 *.bak
 *.backup
 *.old
+
+uv.lock

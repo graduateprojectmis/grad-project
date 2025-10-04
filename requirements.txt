@@ -9,7 +9,7 @@ typing-extensions==4.15.0
 urllib3==2.5.0
 
 # Language detection and text processing
-langid.py==1.1.6
+langid==1.1.6
 jieba==0.42.1
 
 # Natural language processing
