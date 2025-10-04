@@ -4,6 +4,8 @@ import os
 import time
 import dotenv
 
+dotenv.load_dotenv()
+
 GOOGLE_API_KEY = os.getenv('GEMINI_API_KEY')
 
 genai.configure(api_key=GOOGLE_API_KEY)
