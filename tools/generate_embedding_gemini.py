@@ -3,26 +3,11 @@ import google.generativeai as genai
 import os
 import time
 import dotenv
+from load_save_data import load_json_data, save_to_json
 
 dotenv.load_dotenv()
-
 GOOGLE_API_KEY = os.getenv('GEMINI_API_KEY')
-
 genai.configure(api_key=GOOGLE_API_KEY)
-
-# --- 2. 定義資料處理函式 ---
-
-def load_json_data(file_path: str) -> list:
-    """從指定的路徑載入 JSON 檔案。"""
-    try:
-        with open(file_path, 'r', encoding='utf-8') as f:
-            return json.load(f)
-    except FileNotFoundError:
-        print(f"錯誤：找不到檔案 '{file_path}'。")
-        return []
-    except json.JSONDecodeError:
-        print(f"錯誤：檔案 '{file_path}' 的 JSON 格式不正確。")
-        return []
 
 def process_and_embed_data(raw_data: list, model_name: str = 'models/text-embedding-004') -> list:
     """
@@ -103,18 +88,40 @@ def process_and_embed_data(raw_data: list, model_name: str = 'models/text-embedd
     print("步驟 4/4：資料處理完成。")
     return processed_data
 
-def save_to_json(data: list, output_file_path: str):
-    """將處理好的資料儲存為 JSON 檔案。"""
-    if not data:
-        print("沒有資料可以儲存。")
-        return
-        
+def process_and_embed_questions(questions: list, model_name: str = 'models/text-embedding-004') -> list:
+    """
+    處理問題列表並產生對應的向量。
+
+    Args:
+        questions: 問題字串列表。
+        model_name: 要使用的 Embedding 模型名稱。
+    Returns:
+        一個包含問題及對應向量的處理後資料列表。
+    """
+    if not questions:
+        return []
+
+    print("正在處理問題並產生向量...")
     try:
-        with open(output_file_path, 'w', encoding='utf-8') as f:
-            json.dump(data, f, ensure_ascii=False, indent=2)
-        print(f"成功將 Embeddings 儲存至 '{output_file_path}'")
-    except IOError as e:
-        print(f"寫入檔案時發生錯誤：{e}")
+        result = genai.embed_content(model=model_name,
+                                     content=questions,
+                                     task_type="RETRIEVAL_QUERY")
+        embeddings = result['embedding']
+    except Exception as e:
+        print(f"呼叫 API 時發生錯誤：{e}")
+        return []
+
+    question_data = []
+    for question, embedding in zip(questions, embeddings):
+        question_data.append({
+            "question": question,
+            "question_embedding": embedding
+        })
+
+    print("問題向量處理完成。")
+    return question_data
+
+
 
 # --- 3. 主程式執行流程 ---
 if __name__ == "__main__":
@@ -125,8 +132,6 @@ if __name__ == "__main__":
     airpods_manual_data = load_json_data(INPUT_FILE)
 
     if airpods_manual_data:
-        # 處理資料並產生 Embeddings
         final_data_with_embeddings = process_and_embed_data(airpods_manual_data)
         
-        # 儲存結果
         save_to_json(final_data_with_embeddings, OUTPUT_FILE)

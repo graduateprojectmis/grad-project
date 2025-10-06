@@ -11,7 +11,7 @@ import time
 import os
 from urllib.parse import urljoin
 
-def scrape_airpods_manual():
+def scrape_airpods_manual() -> list:
     toc_url = "https://support.apple.com/zh-tw/guide/airpods/welcome/web"
     
     headers = {

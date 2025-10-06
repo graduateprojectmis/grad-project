@@ -12,6 +12,7 @@ import os
 import json
 import openai
 import dotenv
+from load_save_data import save_to_json, load_json_data
 
 dotenv.load_dotenv()
 
@@ -65,11 +66,8 @@ if __name__ == "__main__":
     input_file = "output/json/airpods_manual_data.json"
     output_file = "output/json/text_embedding_openai.json"
 
-    # 讀取結構化資料
-    with open(input_file, "r", encoding="utf-8") as f:
-        structured_data = json.load(f)
+    structured_data = load_json_data(input_file)
     
     chunk_data = split_text(structured_data)
     
-    with open(output_file, "w", encoding="utf-8") as f:
-        json.dump(chunk_data, f, ensure_ascii=False, indent=4)
+    save_to_json(chunk_data, output_file)
