@@ -5,14 +5,14 @@
 """
 
 import requests
-import json
 from bs4 import BeautifulSoup
 import time
 import os
 from urllib.parse import urljoin
+from load_save_data import load_json_data, save_to_json
 
-def scrape_airpods_manual() -> list:
-    toc_url = "https://support.apple.com/zh-tw/guide/airpods/welcome/web"
+def scrape_airpods_manual(url: str, output_filename = "") -> list:
+    toc_url = url
     
     headers = {
         'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
@@ -73,21 +73,14 @@ def scrape_airpods_manual() -> list:
             except requests.RequestException as e:
                 print(f"    [Error] 抓取頁面 '{page_title}' ({page_url}) 時發生錯誤: {e}")
 
-        return rag_database
+        if output_filename:
+            save_to_json(rag_database, output_filename)
+        else:
+            return rag_database
 
     except requests.RequestException as e:
         print(f"無法訪問目錄頁面 {toc_url}。錯誤: {e}")
         return None
 
 if __name__ == '__main__':
-    airpods_data = scrape_airpods_manual()
-    
-    if airpods_data:
-        output_filename = 'output/json/airpods_manual_data.json'
-        
-        os.makedirs(os.path.dirname(output_filename), exist_ok=True)
-        
-        with open(output_filename, 'w', encoding='utf-8') as f:
-            json.dump(airpods_data, f, ensure_ascii=False, indent=4)
-        
-        print(f"[Function Ended]資料已儲存至檔案：{output_filename}")
+    data = scrape_airpods_manual("https://support.apple.com/zh-tw/guide/airpods/welcome/web")
