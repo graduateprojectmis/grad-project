@@ -113,3 +113,5 @@ ENV/
 *.old
 
 uv.lock
+# ChromaDB local storage
+chroma_db/
