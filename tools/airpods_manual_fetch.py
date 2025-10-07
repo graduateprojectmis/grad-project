@@ -2,6 +2,10 @@
 1. 透過抓取Airpods Support網站的toc hasIcons類別獲得目錄
 2. 便利每個分頁並且獲取其中的AppleTopic apd-topic dark-mode-enabled book book-content類別中的文字
 3. 輸出結果爲JSON檔
+
+提供兩種使用方法：
+    1. 傳入url與output_filename參數，會將結果儲存至指定檔案
+    2. 僅傳入url參數，會回傳結果列表一個list[dict]
 """
 
 import requests
@@ -9,7 +13,7 @@ from bs4 import BeautifulSoup
 import time
 import os
 from urllib.parse import urljoin
-from load_save_data import load_json_data, save_to_json
+from .load_save_data import load_json_data, save_to_json
 
 def scrape_airpods_manual(url: str, output_filename = "") -> list:
     toc_url = url

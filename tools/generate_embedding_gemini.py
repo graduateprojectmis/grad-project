@@ -3,7 +3,7 @@ import google.generativeai as genai
 import os
 import time
 import dotenv
-from load_save_data import load_json_data, save_to_json
+from .load_save_data import load_json_data, save_to_json
 
 dotenv.load_dotenv()
 GOOGLE_API_KEY = os.getenv('GEMINI_API_KEY')
