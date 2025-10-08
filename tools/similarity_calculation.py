@@ -142,14 +142,12 @@ def find_most_similar_chunks(
         
         # Find the items corresponding to the most similar titles
         top_titles = [item['title'] for item in title_similarities]
-        print(f"Top similar titles: {top_titles}")
         
         # Filter data items that match the top similar titles
         relevant_items = [
             item for item in data_with_embeddings 
             if item.get('title') in top_titles
         ]
-        print(f"Found {len(relevant_items)} items with matching titles")
         
         # Extract chunks only from the relevant items (titles with high similarity)
         chunk_list = []
@@ -266,7 +264,7 @@ def print_similarity_results(
         print()
 
 
-def calculate(question_file: str, data_file:str) -> None:
+def calculate(question_file: str, data_file:str) -> list:
     """
     Main function: Load data, calculate similarities, and display results.
     """
@@ -295,9 +293,7 @@ def calculate(question_file: str, data_file:str) -> None:
             chunk_top_k=10
         )
         
-        print_similarity_results(results)
-        
-        print(f"\nSuccessfully processed {len(results)} questions")
+        return results
         
     except FileNotFoundError as e:
         print(f"Error : File not found - {e}")
