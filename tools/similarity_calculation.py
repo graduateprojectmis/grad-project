@@ -101,7 +101,8 @@ def _calculate_similarities_for_items(
 def find_most_similar_chunks(
     query_embedding: Union[List[float], NDArray[np.float64]], 
     data_with_embeddings: List[Dict[str, Any]], 
-    top_k: int = 5,
+    title_top_k: int = 5,
+    chunk_top_k: int = 5,
     include_titles: bool = True
 ) -> List[Dict[str, Any]]:
     
@@ -136,7 +137,7 @@ def find_most_similar_chunks(
             data_with_embeddings,
             'title_embedding',
             'title',
-            top_k
+            title_top_k
         )
         
         # Find the items corresponding to the most similar titles
@@ -168,7 +169,7 @@ def find_most_similar_chunks(
         chunk_list,
         'chunk_embedding',
         'chunk_text',
-        top_k * 2  # Get more results to ensure we have enough after deduplication
+        chunk_top_k  # Get more results to ensure we have enough after deduplication
     )
     all_similarities.extend(chunk_similarities)
     
@@ -184,13 +185,14 @@ def find_most_similar_chunks(
             seen_texts.add(text)
             unique_similarities.append(item)
     
-    return unique_similarities[:top_k]
+    return unique_similarities[:chunk_top_k]
 
 
 def process_questions_similarity(
     questions_with_embeddings: List[Dict[str, Any]],
     data_with_embeddings: List[Dict[str, Any]],
-    top_k: int = 5
+    title_top_k: int = 5,
+    chunk_top_k: int = 10
 ) -> Dict[str, List[Dict[str, Any]]]:
     
     """
@@ -219,7 +221,8 @@ def process_questions_similarity(
             top_similar_chunks = find_most_similar_chunks(
                 question_embedding, 
                 data_with_embeddings, 
-                top_k=top_k
+                title_top_k,
+                chunk_top_k,
             )
             results[question] = top_similar_chunks
         except Exception as e:
@@ -263,13 +266,10 @@ def print_similarity_results(
         print()
 
 
-def calculate() -> None:
+def calculate(question_file: str, data_file:str) -> None:
     """
     Main function: Load data, calculate similarities, and display results.
     """
-    
-    data_file = "../output/json/text_embedding_gemini.json"
-    question_file = "../output/json/question_embeddings.json"
     
     try:
         print("Loading JSON file...")
@@ -291,7 +291,8 @@ def calculate() -> None:
         results = process_questions_similarity(
             questions_with_embeddings,
             data_with_embeddings,
-            top_k=5
+            title_top_k=5,
+            chunk_top_k=10
         )
         
         print_similarity_results(results)

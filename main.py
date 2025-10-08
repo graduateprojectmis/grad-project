@@ -7,11 +7,11 @@ import os
 def main():
     # Fetch and embed AirPods manual data
     url = "https://support.apple.com/en-us/guide/airpods/welcome/web"
-    # output_file = "../output/json/airpods_manual_data.json"
     input_data = scrape_airpods_manual(url)
-    
+
     embedding_output_file = "../output/json/text_embedding_gemini.json"
-    
+    question_output_file = "../output/json/question_embeddings.json"
+
     if input_data:
         final_data_with_embeddings = process_and_embed_data(input_data)
         save_to_json(final_data_with_embeddings, embedding_output_file)
@@ -23,13 +23,13 @@ def main():
         "How to check AirPods battery status?",
         "How to use AirPods with a Mac?",
     ]
-    question_embeddings = process_and_embed_questions(questions)
-    
-    question_output_file = "../output/json/question_embeddings.json"
-    save_to_json(question_embeddings, question_output_file)
+
+    if questions:
+        question_embeddings = process_and_embed_questions(questions)
+        save_to_json(question_embeddings, question_output_file)
     
     # Calculate similarity and display results
-    calculate()
+    calculate(question_output_file, embedding_output_file)
 
 if __name__ == '__main__':
     main()
