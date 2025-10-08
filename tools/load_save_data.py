@@ -18,10 +18,12 @@ def save_to_json(data: list, output_file_path: str):
     if not data:
         print("沒有資料可以儲存。")
         return
-        
+    
+    os.makedirs(os.path.dirname(output_file_path), exist_ok=True)
+    
     try:
         with open(output_file_path, 'w', encoding='utf-8') as f:
             json.dump(data, f, ensure_ascii=False, indent=2)
-        print(f"成功將 Embeddings 儲存至 '{output_file_path}'")
+        print(f"成功將儲存資料至 '{output_file_path}'")
     except IOError as e:
         print(f"寫入檔案時發生錯誤：{e}")

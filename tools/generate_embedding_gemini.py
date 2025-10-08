@@ -3,22 +3,38 @@ import google.generativeai as genai
 import os
 import time
 import dotenv
-from load_save_data import load_json_data, save_to_json
+
+Model_Name = 'models/text-embedding-004'
 
 dotenv.load_dotenv()
 GOOGLE_API_KEY = os.getenv('GEMINI_API_KEY')
 genai.configure(api_key=GOOGLE_API_KEY)
 
-def process_and_embed_data(raw_data: list, model_name: str = 'models/text-embedding-004') -> list:
+def process_and_embed_data(raw_data: list, model_name: str = Model_Name) -> list:
     """
-    處理原始資料，對標題和內容分塊進行批次向量化。
+    Process raw data and batch generate titles and chunks in each title。
 
     Args:
-        raw_data: 從 JSON 檔案讀取的原始資料列表。
-        model_name: 要使用的 Embedding 模型名稱。
+        raw_data: List that fetched from JSON file。
+        model_name: Which model we use。
 
     Returns:
-        一個包含標題、分塊及對應向量的處理後資料列表。
+        A List that contain title, chunks, embeddings。
+        format:
+        [
+            {
+                "title": "Title text",
+                "title_embedding": [...],
+                "chunks": [
+                    {
+                        "chunk_text": "Chunk text",
+                        "chunk_embedding": [...]
+                    },
+                    ...
+                ]
+            },
+            ...
+        ]
     """
     if not raw_data:
         return []
@@ -26,41 +42,46 @@ def process_and_embed_data(raw_data: list, model_name: str = 'models/text-embedd
     texts_to_embed = []
     processed_data = []
 
-    print("步驟 1/4：正在準備文字並進行分塊...")
-    # 準備所有要向量化的文字 (標題 + chunks)
+    print("Getting data and preparing for embedding...")
+    
+
     for item in raw_data:
         title = item.get('title', '')
         content = item.get('content', '')
 
-        # 將標題加入待處理列表
-        texts_to_embed.append(title)
+        # Add title to texts_to_embed if it exists
+        if title:    
+            texts_to_embed.append(title)
         
-        # 將內容分塊，並過濾掉空字串
+        """
+        Should find a better way to split content into chunks.
+        """
         chunks = [chunk.strip() for chunk in content.split('\n') if chunk.strip()]
         
-        # 將有效的分塊加入待處理列表
+        # Add chunks to texts_to_embed
         texts_to_embed.extend(chunks)
 
-        # 建立最終輸出的基本結構
+        # Prepare processed_data structure
         processed_data.append({
             "title": title,
-            "title_embedding": [], # 稍後填入
+            "title_embedding": [],
             "chunks": [{"chunk_text": chunk, "chunk_embedding": []} for chunk in chunks]
         })
 
-    print(f"總共需要向量化的文字數量：{len(texts_to_embed)}")
+    print(f"Chunks waiting for batch embedding：{len(texts_to_embed)}")
 
-    print("步驟 2/4：正在呼叫 Gemini API 進行批次向量化...")
-    # 進行批次向量化 (Batch Embedding)
+    print("Batch Embedding...")
     try:
-        # Gemini API 一次請求的數量上限為 100，若超過需分批處理
+        
+        # Gemini api only support max 100 texts per request so we set batch_size = 100.
         batch_size = 100
         all_embeddings = []
         for i in range(0, len(texts_to_embed), batch_size):
             batch = texts_to_embed[i:i+batch_size]
-            # 為了避免觸及每分鐘請求次數上限，可以在批次間加入短暫延遲
+            
+            # To avoid hitting the per-minute request limit, we can embed in batches with a short delay between batches.
             if i > 0:
-                print(f"處理完畢 {i} 個項目，延遲 1 秒...")
+                print(f"{i} items has been processed, Wait 1 sec...")
                 time.sleep(1)
             
             result = genai.embed_content(model=model_name,
@@ -69,46 +90,54 @@ def process_and_embed_data(raw_data: list, model_name: str = 'models/text-embedd
             all_embeddings.extend(result['embedding'])
             
     except Exception as e:
-        print(f"呼叫 API 時發生錯誤：{e}")
+        print(f"Error occurs when calling API : {e}")
         return []
 
-    print("步驟 3/4：正在將向量結果映射回原始資料...")
-    # 將向量結果對應回 processed_data
+    print("Mapping data to processed_data that initialized earlier...")
     embedding_idx = 0
     for doc in processed_data:
-        # 對應 title 的 embedding
+        # Corresponding title's embedding
         doc['title_embedding'] = all_embeddings[embedding_idx]
         embedding_idx += 1
         
-        # 對應每個 chunk 的 embedding
+        # Corresponding chunks' embeddings
         for chunk in doc['chunks']:
             chunk['chunk_embedding'] = all_embeddings[embedding_idx]
             embedding_idx += 1
             
-    print("步驟 4/4：資料處理完成。")
+    print("Data processing and embedding completed.")
     return processed_data
 
-def process_and_embed_questions(questions: list, model_name: str = 'models/text-embedding-004') -> list:
+def process_and_embed_questions(questions: list, model_name: str = Model_Name) -> list:
     """
-    處理問題列表並產生對應的向量。
+    Process raw data and batch generate questions。
 
     Args:
-        questions: 問題字串列表。
-        model_name: 要使用的 Embedding 模型名稱。
+        raw_data: List that fetched from main.py pass。
+        model_name: Which model we use。
+
     Returns:
-        一個包含問題及對應向量的處理後資料列表。
+        A List that contain title, chunks, embeddings。
+        format:
+        [
+            {
+                "question": "Question text",
+                "question_embedding": [...]
+            },
+            ...
+        ]
     """
     if not questions:
         return []
 
-    print("正在處理問題並產生向量...")
+    print("Prepare content for embedding...")
     try:
         result = genai.embed_content(model=model_name,
                                      content=questions,
                                      task_type="RETRIEVAL_QUERY")
         embeddings = result['embedding']
     except Exception as e:
-        print(f"呼叫 API 時發生錯誤：{e}")
+        print(f"Error occurs when calling API : {e}")
         return []
 
     question_data = []
@@ -118,20 +147,5 @@ def process_and_embed_questions(questions: list, model_name: str = 'models/text-
             "question_embedding": embedding
         })
 
-    print("問題向量處理完成。")
+    print("Question embedding completed.")
     return question_data
-
-
-
-# --- 3. 主程式執行流程 ---
-if __name__ == "__main__":
-    INPUT_FILE = "output/json/airpods_manual_data.json"
-    OUTPUT_FILE = "output/json/text_embedding_gemini.json"
-
-    # 載入原始資料
-    airpods_manual_data = load_json_data(INPUT_FILE)
-
-    if airpods_manual_data:
-        final_data_with_embeddings = process_and_embed_data(airpods_manual_data)
-        
-        save_to_json(final_data_with_embeddings, OUTPUT_FILE)
