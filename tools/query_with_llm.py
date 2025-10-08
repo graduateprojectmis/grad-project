@@ -1,6 +1,6 @@
 import os
 import openai
-from tools.ChromaDB import initialize_chroma_db, query_chromadb
+from ChromaDB import initialize_chroma_db, query_chromadb
 
 client_llm = openai.ChatCompletion(api_key=os.getenv("OPENAI_API_KEY"))
 
