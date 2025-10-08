@@ -1,0 +1,45 @@
+{
+  "How to pair AirPods with an iPhone?": [],
+  "How to reset AirPods?": [
+    {
+      "chunk_text": "注意\n移除 AirPods 後你必須將它們與你\nApple 帳號\n綁定的裝置配對才能再次使用\n將 AirPods 重置為出廠設定\n若 AirPods 在你重新啟動或取消配對後運作不正常你可以將其重置為出廠設定\nAirPods 1、2 或 3或 AirPods Pro 1 或 2\n將 AirPods 放進充電盒然後關上蓋子並等候 30 秒打開蓋子然後按住充電盒背面的\n設定按鈕\n約 15 秒鐘直到狀態指示燈閃爍琥珀色然後閃爍白色\nAirPods 4 或 AirPods Pro 3\n將 AirPods 放進充電盒然後關上蓋子並等候 30 秒打開蓋子然後點兩下充電盒正面三次\n成功重置 AirPods 時狀態指示燈會閃爍琥珀色然後變成白色\nAirPods Max\n在右邊耳機上同時按住\n數位旋鈕\n和噪音控制按鈕直到充電埠旁邊的狀態指示燈從閃爍琥珀色改為閃爍白色（約 15 秒）\n請參閱 Apple 支援文章\n如果 AirPods 或 AirPods Pro 無法連線\n\n本指南適用於 iOS 26、iPadOS 26、macOS Tahoe、watchOS 26、tvOS 26 或以上版本\n也請參閱\n將 AirPods 與 Apple 裝置配對\n將 AirPods 與非 Apple 裝置配對\n重新命名 AirPods",
+      "similarity": 0.6307520336204551
+    },
+    {
+      "chunk_text": "重新啟動、取消配對或重置你的 AirPods\n若你的 AirPods 運作不正常請先確定與其配對的裝置為\n最新狀態\n然後嘗試重新啟動、取消配對或重置 AirPods\n重新啟動 AirPods\n若你的 AirPods 運作不正常請嘗試重新啟動\nAirPods 或 AirPods Pro\n將 AirPods 放進充電盒然後關上蓋子至少 10 秒\nAirPods Max\n在右耳機上同時按住\n數位旋鈕\n和噪音控制按鈕直到充電埠旁邊的狀態指示燈閃爍琥珀色（約 10 秒）然後立即放開按鈕\n重要事項\n如果你按住按鈕的時間超過大約 10 秒AirPods Max 會重置為出廠設定\n取消配對 AirPods\niPhone 或 iPad\n前往設定App\n在靠近螢幕最上方\n點一下你 AirPods 的名稱\n然後點一下忘記此裝置設定這麼做會從你登入同一個\nApple 帳號\n的所有裝置上移除 AirPods\nMac\n在 Mac 上前往\n系統設定\nApp\n按一下側邊欄中的 AirPods 名稱（可能需要向下捲動）然後按一下忘記此裝置設定\nApple Watch\n前往設定App\n點一下藍牙點一下\n然後點一下忘記裝置設定來從所有你登入同一個\nApple 帳號\n的裝置上移除 AirPods\nApple TV\n前往設定App\n然後選取遙控器和裝置選取藍牙選取你的 AirPods然後選取忘記此裝置設定\n注意",
+      "similarity": 0.6174156476986423
+    }
+  ],
+  "How to check AirPods battery status?": [
+    {
+      "chunk_text": "取得 AirPods 的相關資訊\n如需有關你 AirPods 的資訊例如機型名稱、序號或韌體版本等你可以前往 iPhone 或 iPad 上的設定或 Mac 上的系統設定查看\n部分資訊也會直接印在你的 AirPods 上\niPhone 或 iPad\n佩戴 AirPods前往設定App\n然後在螢幕最上方\n點一下你 AirPods 的名稱\n\nMac\n佩戴 AirPods前往\n系統設定\nApp\n然後在側邊欄中按一下你 AirPods 的名稱（你可能需要向下捲動）\n在你的 AirPods 上\n在兩邊 AirPods 的底端或 AirPods Max 左耳墊的底部尋找序號和機型型號\n如需支援和疑難解答的相關資訊請前往\nsupport.apple.comzh-tw\n\n也請參閱\n我的 AirPods 是哪一個機型\nApple 支援文章尋找 AirPods 的序號\nApple 支援文章識別你的AirPods",
+      "similarity": 0.5035886697186105
+    }
+  ],
+  "How to use AirPods with a Mac?": [
+    {
+      "chunk_text": "AirPods Max\n將 AirPods Max 從智慧型充電盒中取出並在 60 秒內將它們放在要配對的裝備旁邊直到設定動畫出現為止\n你也可以\n使用音訊連接線將 AirPods Max 連接到你的裝置\n\n依照螢幕上的指示操作然後點一下完成\n如果你沒有看到設定動畫你可以\n手動將 AirPods 與你的裝置配對\n\n將 AirPods 與 Mac 配對\n開始之前請確定 Mac 已\n安裝最新版的 macOS\n\n前往 Mac 上的\n系統設定\nApp\n\n在側邊欄中按一下藍牙\n\n確認藍牙已開啟然後執行下列其中一項操作\nAirPods 1、2 或 3或 AirPods Pro 1 或 2\n打開放有 AirPods 的充電盒靠近你的 Mac然後按住 AirPods 充電盒背面的\n設定按鈕\n約 5 秒或直到狀態指示燈呈現白色閃爍\nAirPods 4 或 AirPods Pro 3\n打開放有 AirPods 的充電盒靠近你的 Mac然後按兩下 AirPods 充電盒正面讓狀態指示燈呈現白色閃爍\nAirPods Max\n按住噪音控制按鈕約 5 秒或直到狀態指示燈呈現白色閃爍\n你也可以\n使用音訊連接線將 AirPods Max 連接到你的裝置\n\n在裝置列表中選取你的 AirPods然後按一下連線\n提示\n你也可以在選單列中\n顯示藍牙設定\n讓你更方便配對 AirPods",
+      "similarity": 0.606432498701899
+    },
+    {
+      "chunk_text": "執行下列其中一項操作\nAirPods 4 或 AirPods Pro 3\n打開放有 AirPods 的充電盒靠近你的裝置然後按兩下充電盒正面讓狀態指示燈呈現白色閃爍\nAirPods Max\n按住 AirPods Max 上的噪音控制按鈕約 5 秒或直到指示燈呈現白色閃爍\n如果你有 AirPods Max（USB-C）你也可以使用 USB-C 對 USB-C 連接線將 AirPods 配對到你的裝置\n其他 AirPods 機型\n打開放有 AirPods 的充電盒靠近你的裝置然後按住充電盒背面的設定按鈕直到狀態指示燈呈現白色閃爍\n前往裝置上的設定App\n（在 Mac 上前往\n系統設定\nApp）\n點一下或按一下藍牙然後在列表中選取出現的 AirPods\n本指南適用於 iOS 26、iPadOS 26、macOS Tahoe、watchOS 26、tvOS 26 或以上版本\n也請參閱\n將 AirPods 與非 Apple 裝置配對\nApple 支援文章如果你的 AirPods 或 AirPods Pro 無法連接",
+      "similarity": 0.6017017380022928
+    },
+    {
+      "chunk_text": "將 AirPods 與 Apple 裝置配對\n將 AirPods 與你的 Apple 裝置配對來聆聽音樂、影片聲音、訊息和更多音訊你也可搭配相容的裝置使用 AirPods 來撥打和接聽電話以及 FaceTime 通話\n在你使用一部 Apple 裝置（如 iPhone）設定 AirPods 後你的 AirPods 會自動連接到你登入同一個\nApple 帳號\n的其他 Apple 裝置\n如果你不確定自己使用的 AirPods 機型請參閱\n我的 AirPods 是哪一個機型\n快速連結\n將 AirPods 與 iPhone 或 iPad 配對\n將 AirPods 與 Mac 配對\n將 AirPods 與 Apple Watch 配對\n將 AirPods 與 Apple TV 配對\n將 AirPods 與 Apple Vision Pro 配對\n將 AirPods 與 iPhone 或 iPad 配對\n開始之前請確定裝置已\n安裝最新版的 iOS 或 iPadOS\n配對時裝置也必須連接 Wi-Fi 或行動網路否則無法使用尋找功能\n前往 iPhone 或 iPad 上的設定App\n\n點一下藍牙開啟藍牙然後執行下列其中一項操作\nAirPods 或 AirPods Pro\n打開放有 AirPods 的充電盒然後將其靠近你想要配對的裝置直到出現設定動畫為止\nAirPods Max",
+      "similarity": 0.5598145226315108
+    },
+    {
+      "chunk_text": "在其他裝置下方點一下你的 AirPods\n如需更多搭配 Apple Vision Pro 使用 AirPods 的相關資訊請參閱 Apple 支援文章\n搭配 Apple Vision Pro 使用 AirPods\n\n注意\n保真壓縮音訊在連接到 Apple Vision Pro 後才可供使用適用範圍因地區而異\n使用音源線連接 AirPods Max\n你可以使用支援的音訊連接線將 AirPods Max 連接到你的裝置\nAirPods Max（Lightning）\n將 Apple Lightning 對 3.5 mm 音源線連接到 AirPods Max 上的充電埠和你裝置上的耳機插孔\nAirPods Max（USB-C）\n將 Apple USB-C 對 3.5 mm 音源線連接到 AirPods Max 上的充電埠和你裝置上的耳機插孔\n你也可以使用 USB-C 對 USB-C 連接線將 AirPods Max 連接到配備 USB-C 埠的 iPhone、iPad 或 Mac若要完整使用所有功能請在連接的裝置上開啟藍牙（需要 iOS 18.4、iPadOS 18.4、macOS 15.4 或以上版本）\n手動將 AirPods 與裝置配對\n如果你嘗試將 AirPods 連接到裝置但未看到設定動畫可以手動將 AirPods 與裝置配對\n執行下列其中一項操作",
+      "similarity": 0.5497496576675468
+    },
+    {
+      "chunk_text": "顯示藍牙設定\n讓你更方便配對 AirPods\n將 AirPods 與 Apple Watch 配對\n開始之前請確定 Apple Watch 已\n安裝最新版的 watchOS\n\n前往 Apple Watch 上的設定App\n\n點一下藍牙然後點一下藍牙畫面上的 AirPods 進行連接\n如果你沒有看到設定動畫你可以\n手動將 AirPods 與你的裝置配對\n\n將 AirPods 與 Apple TV 配對\n開始之前請確定 Apple TV 已\n安裝最新版的 tvOS\n\n前往 Apple TV 上的設定App\n\n向下捲動選取遙控器和裝置然後選取藍牙\n執行下列其中一項操作\nAirPods 1、2 或 3或 AirPods Pro 1 或 2\n打開 AirPods 充電盒然後按住充電盒背面的\n設定按鈕\n約 5 秒或直到狀態指示燈呈現白色閃爍\nAirPods 4 或 AirPods Pro 3\n打開放有 AirPods 的充電盒靠近你的裝置然後按兩下 AirPods 充電盒正面讓狀態指示燈呈現白色閃爍\nAirPods Max\n按住噪音控制按鈕約 5 秒或直到指示燈呈現白色閃爍\n在其他裝置下方選取你的 AirPods\n將 AirPods 與 Apple Vision Pro 配對\n開始之前請確定 Apple Vision Pro 已\n安裝最新版的 visionOS",
+      "similarity": 0.544185091645137
+    },
+    {
+      "chunk_text": "安裝最新版的 visionOS\n\n若要取得極致沉浸式體驗你可以配對 AirPods 4、AirPods Pro 2（USB-C）或 AirPods Pro 3與 Apple Vision Pro（使用專用無線音訊通訊協定）配對時會為保真壓縮音訊提供超低延遲的效果AirPods 2、AirPods 3、AirPods Pro 1、AirPods Pro 2（Lightning）和 AirPods Max 無線耳機使用 Apple AAC 藍牙編解碼器可確保優異的音訊品質不過藍牙連線並沒有保真壓縮\n前往 Apple Vision Pro 上的設定App\n\n點一下藍牙\n執行下列其中一項操作\nAirPods 1、2 或 3或 AirPods Pro 1 或 2\n將 AirPods 放入充電盒中打開蓋子然後按住 AirPods 充電盒背面的\n設定按鈕\n約 5 秒或直到狀態指示燈呈現白色閃爍\nAirPods 4 或 AirPods Pro 3\n打開放有 AirPods 的充電盒靠近你的裝置然後按兩下 AirPods 充電盒正面讓狀態指示燈呈現白色閃爍\nAirPods Max\n將 AirPods Max 拿出智慧型充電盒按住 AirPods Max 上的噪音控制按鈕約 5 秒或直到指示燈呈現白色閃爍\n在其他裝置下方點一下你的 AirPods",
+      "similarity": 0.5321392581172671
+    }
+  ]
+}

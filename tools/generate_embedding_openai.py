@@ -1,18 +1,11 @@
-"""
-1. 將結構化資料中的文字拆分為多個 chunk。
-2. 使用 OpenAI API 生成每個 chunk 的嵌入向量。
-3. 將 chunk 與 embedding 後的結果合併輸出結果爲 JSON 檔。
-4. 輸入： 結構化資料 (list of dict)
-5. 輸出： 包含 chunk 與 embedding 的 JSON 檔 (list of dict)
-"""
-
 from langchain_text_splitters import RecursiveCharacterTextSplitter
-from clean_data import preprocess_text
+from tools.clean_data import preprocess_text
 import os
 import json
 import openai
 import dotenv
-from load_save_data import save_to_json, load_json_data
+
+Model_Name = 'text-embedding-3-small'
 
 dotenv.load_dotenv()
 
@@ -21,12 +14,15 @@ class EmbeddingGenerator:
         openai.api_key = api_key
 
     def generate_embedding(self, chunks):
-        """
-        input: chunks (list[str])
-        output: list[embedding vectors]
-        """
+        '''
+        embed text using OpenAI API
+        Args:
+            chunks: list of text chunks
+        Returns:
+            list of embeddings
+        '''
         response = openai.Embedding.create(
-            model="text-embedding-3-small",
+            model=Model_Name,
             input=chunks
         )
         return [item["embedding"] for item in response["data"]]
@@ -34,7 +30,16 @@ class EmbeddingGenerator:
 # 初始化 EmbeddingGenerator
 embedding_generator = EmbeddingGenerator(api_key=os.getenv("OPENAI_API_KEY"))
 
-def split_text(structured_data, chunk_size=600, chunk_overlap=30):
+def split_text(content, chunk_size=600, chunk_overlap=30):
+    '''
+    split text into chunks
+    Args:
+        content: raw text
+        chunk_size: max length of each chunk
+        chunk_overlap: overlap length between chunks
+    Returns:
+        list of chunks
+    '''
     # 初始化文本切分器，設定分割規則
     text_splitter = RecursiveCharacterTextSplitter(
         chunk_size=chunk_size,
@@ -44,30 +49,128 @@ def split_text(structured_data, chunk_size=600, chunk_overlap=30):
         separators=["。", "！", "？", "\n", "，", " "]
     )
 
-    chunk_data = []
+    # 清理原始文字
+    cleaned_text = preprocess_text(content)
+    # 切分成 chunk
+    chunks = text_splitter.split_text(cleaned_text)
 
-    for section in structured_data:
-        text = section.get("content", "")
-        if not text.strip():
-            continue
-        # 清理原始文字
-        cleaned_text = preprocess_text(text)
-        # 切分成 chunk
-        chunks = text_splitter.split_text(cleaned_text)
-        for chunk in chunks:
-            chunk_data.append({
-                "chunk": chunk,
-                "embedding": embedding_generator.generate_embedding([chunk])[0]
-            })
+    return chunks
 
-    return chunk_data
+def process_and_embed_data(raw_data: list, model_name: str = Model_Name) -> list:
+    """
+    Process raw data and batch generate titles and chunks in each title。
 
-if __name__ == "__main__":
-    input_file = "output/json/airpods_manual_data.json"
-    output_file = "output/json/text_embedding_openai.json"
+    Args:
+        raw_data: List that fetched from JSON file。
+        model_name: Which model we use。
 
-    structured_data = load_json_data(input_file)
+    Returns:
+        A List that contain title, chunks, embeddings。
+        format:
+        [
+            {
+                "title": "Title text",
+                "title_embedding": [...],
+                "chunks": [
+                    {
+                        "chunk_text": "Chunk text",
+                        "chunk_embedding": [...]
+                    },
+                    ...
+                ]
+            },
+            ...
+        ]
+    """
+    if not raw_data:
+        return []
+
+    texts_to_embed = []
+    processed_data = []
+
+    print("Getting data and preparing for embedding...")
     
-    chunk_data = split_text(structured_data)
-    
-    save_to_json(chunk_data, output_file)
+
+    for item in raw_data:
+        title = item.get('title', '')
+        content = item.get('content', '')
+
+        # Add title to texts_to_embed if it exists
+        if title:    
+            texts_to_embed.append(title)
+        
+        chunks = split_text(content)
+        
+        # Add chunks to texts_to_embed
+        texts_to_embed.extend(chunks)
+
+        # Prepare processed_data structure
+        processed_data.append({
+            "title": title,
+            "title_embedding": [],
+            "chunks": [{"chunk_text": chunk, "chunk_embedding": []} for chunk in chunks]
+        })
+
+    print(f"Chunks waiting for batch embedding：{len(texts_to_embed)}")
+
+    print("Batch Embedding...")
+    try:
+        all_embeddings = embedding_generator.generate_embedding(texts_to_embed)
+            
+    except Exception as e:
+        print(f"Error occurs when calling API : {e}")
+        return []
+
+    print("Mapping data to processed_data that initialized earlier...")
+    embedding_idx = 0
+    for doc in processed_data:
+        # Corresponding title's embedding
+        doc['title_embedding'] = all_embeddings[embedding_idx]
+        embedding_idx += 1
+        
+        # Corresponding chunks' embeddings
+        for chunk in doc['chunks']:
+            chunk['chunk_embedding'] = all_embeddings[embedding_idx]
+            embedding_idx += 1
+            
+    print("Data processing and embedding completed.")
+    return processed_data
+
+def process_and_embed_questions(questions: list, model_name: str = Model_Name) -> list:
+    """
+    Process raw data and batch generate questions。
+
+    Args:
+        raw_data: List that fetched from main.py pass。
+        model_name: Which model we use。
+
+    Returns:
+        A List that contain title, chunks, embeddings。
+        format:
+        [
+            {
+                "question": "Question text",
+                "question_embedding": [...]
+            },
+            ...
+        ]
+    """
+    if not questions:
+        return []
+
+    print("Prepare content for embedding...")
+    try:
+        embeddings = embedding_generator.generate_embedding(questions)
+    except Exception as e:
+        print(f"Error occurs when calling API : {e}")
+        return []
+
+    question_data = []
+    for question, embedding in zip(questions, embeddings):
+        question_data.append({
+            "question": question,
+            "question_embedding": embedding
+        })
+
+    print("Question embedding completed.")
+    return question_data

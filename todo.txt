@@ -1,0 +1,8 @@
+generate_embedding_gemini.py:
+    Find a better way to split content into chunk
+
+generate_embedding_openai.py:
+    Modify code like generate_embedding_gemini.py
+
+Model choose:
+    Find a LLM that can support multilang
