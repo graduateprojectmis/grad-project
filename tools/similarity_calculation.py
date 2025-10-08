@@ -59,7 +59,8 @@ def _calculate_similarities_for_items(
     items: List[Dict[str, Any]],
     embedding_key: str,
     text_key: str,
-    top_k: Optional[int] = None
+    top_k: Optional[int] = None,
+    top_percentage: Optional[float] = None
 ) -> List[Dict[str, Any]]:
     
     """
@@ -70,6 +71,8 @@ def _calculate_similarities_for_items(
         items: List of items to compare against
         embedding_key: The key in each item dict that contains the embedding
         text_key: The key in each item dict that contains the text
+        top_k: Number of top results to return (if specified)
+        top_percentage: Minimum similarity threshold (if specified)
         
     Returns:
         List[Dict]: A list of dicts containing the text and similarity score
@@ -95,28 +98,35 @@ def _calculate_similarities_for_items(
     # Sort by similarity in descending order
     similarities.sort(key=lambda x: x['similarity'], reverse=True)
     
-    return similarities if top_k is None else similarities[:top_k]
+    # Apply filtering based on parameters
+    if top_k is not None:
+        return similarities[:top_k]
+    elif top_percentage is not None:
+        return [item for item in similarities if item['similarity'] >= top_percentage]
+    else:
+        return similarities
 
 
 def find_most_similar_chunks(
     query_embedding: Union[List[float], NDArray[np.float64]], 
     data_with_embeddings: List[Dict[str, Any]], 
     title_top_k: int = 5,
-    chunk_top_k: int = 5,
+    chunk_top_percentage: float = 0.75,
     include_titles: bool = True
 ) -> List[Dict[str, Any]]:
     
     """
-    Find the top K most similar chunks in the dataset to the query vector.
+    Find the most similar chunks in the dataset to the query vector.
     
     Args:
         query_embedding: The embedding vector for the query (list or numpy array)
         data_with_embeddings: List of data items containing chunks and their embeddings
-        top_k: Number of top similar chunks to return (default is 5)
+        title_top_k: Number of top similar titles to consider (default is 5)
+        chunk_top_percentage: Minimum similarity threshold for chunks (default is 0.75)
         include_titles: Whether to include title similarity in the calculation (default is True)
         
     Returns:
-        List[Dict]: A list of the top K most similar items, each dict contains text and similarity score
+        List[Dict]: A list of similar chunks with similarity >= chunk_top_percentage
         
     Raises:
         ValueError: If the input data is invalid
@@ -137,7 +147,7 @@ def find_most_similar_chunks(
             data_with_embeddings,
             'title_embedding',
             'title',
-            title_top_k
+            top_k=title_top_k
         )
         
         # Find the items corresponding to the most similar titles
@@ -162,16 +172,17 @@ def find_most_similar_chunks(
             chunk_list.extend(chunks)
     
     # Calculate chunk similarities from the filtered chunk list
+    # Use top_percentage to filter chunks with similarity >= chunk_top_percentage
     chunk_similarities = _calculate_similarities_for_items(
         query_array,
         chunk_list,
         'chunk_embedding',
         'chunk_text',
-        chunk_top_k  # Get more results to ensure we have enough after deduplication
+        top_percentage=chunk_top_percentage
     )
     all_similarities.extend(chunk_similarities)
     
-    # According to similarity sort and return top_k
+    # According to similarity sort and return filtered results
     all_similarities.sort(key=lambda x: x['similarity'], reverse=True)
     
     # Remove duplicates based on chunk_text while preserving order
@@ -183,14 +194,14 @@ def find_most_similar_chunks(
             seen_texts.add(text)
             unique_similarities.append(item)
     
-    return unique_similarities[:chunk_top_k]
+    return unique_similarities
 
 
 def process_questions_similarity(
     questions_with_embeddings: List[Dict[str, Any]],
     data_with_embeddings: List[Dict[str, Any]],
     title_top_k: int = 5,
-    chunk_top_k: int = 10
+    chunk_top_percentage: float = 0.75
 ) -> Dict[str, List[Dict[str, Any]]]:
     
     """
@@ -199,7 +210,8 @@ def process_questions_similarity(
     Args:
         questions_with_embeddings: List of questions with their embeddings
         data_with_embeddings: List of data items with their embeddings
-        top_k: Number of top similar items to return for each question (default is 5
+        title_top_k: Number of top similar titles to consider (default is 5)
+        chunk_top_percentage: Minimum similarity threshold for chunks (default is 0.75)
         
     Returns:
         Dict: A mapping of questions to their most similar content
@@ -220,7 +232,7 @@ def process_questions_similarity(
                 question_embedding, 
                 data_with_embeddings, 
                 title_top_k,
-                chunk_top_k,
+                chunk_top_percentage,
             )
             results[question] = top_similar_chunks
         except Exception as e:
@@ -264,7 +276,7 @@ def print_similarity_results(
         print()
 
 
-def calculate(question_file: str, data_file:str) -> list:
+def calculate(question_file: str, data_file:str, chunk_top_percentage: float) -> list:
     """
     Main function: Load data, calculate similarities, and display results.
     """
@@ -289,8 +301,8 @@ def calculate(question_file: str, data_file:str) -> list:
         results = process_questions_similarity(
             questions_with_embeddings,
             data_with_embeddings,
-            title_top_k=5,
-            chunk_top_k=10
+            title_top_k=1,
+            chunk_top_percentage=chunk_top_percentage
         )
         
         return results

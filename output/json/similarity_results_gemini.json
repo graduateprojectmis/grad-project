@@ -13,10 +13,6 @@
       "similarity": 0.7515602609958234
     },
     {
-      "chunk_text": "When your AirPods appear in the list of Bluetooth devices, select them.",
-      "similarity": 0.7457127669206235
-    },
-    {
       "chunk_text": "In the list of devices, select your AirPods, then click Connect.",
       "similarity": 0.7424111706864537
     },
@@ -27,6 +23,50 @@
     {
       "chunk_text": "pair AirPods with your device manually",
       "similarity": 0.7381401767000367
+    },
+    {
+      "chunk_text": "After you set up your AirPods with one Apple device (like your iPhone), your AirPods connect automatically to your other Apple devices where you’re signed in to the same",
+      "similarity": 0.7367035804025205
+    },
+    {
+      "chunk_text": "Tap or click Bluetooth, then select your AirPods when they appear in the list.",
+      "similarity": 0.7352987908142287
+    },
+    {
+      "chunk_text": "Pair AirPods with a device manually",
+      "similarity": 0.7317542425377261
+    },
+    {
+      "chunk_text": "If you try to connect your AirPods to your device and you don’t see the setup animation, you can pair AirPods with your device manually.",
+      "similarity": 0.7264931498295308
+    },
+    {
+      "chunk_text": "Pair AirPods with Mac",
+      "similarity": 0.724328224431887
+    },
+    {
+      "chunk_text": "Pair AirPods with your Apple devices to listen to music, movies, messages, and more. You can also use your AirPods to make and answer phone calls and FaceTime calls with compatible devices.",
+      "similarity": 0.724136203721308
+    },
+    {
+      "chunk_text": "Take your AirPods Max out of the Smart Case, and within 60 seconds, hold them next to the device that you want to pair until the setup animation appears.",
+      "similarity": 0.7226839765378458
+    },
+    {
+      "chunk_text": "Pair AirPods with a non-Apple device",
+      "similarity": 0.7088139659752143
+    },
+    {
+      "chunk_text": "Pair AirPods with Apple Watch",
+      "similarity": 0.7051749951436665
+    },
+    {
+      "chunk_text": "Below Other Devices, tap your AirPods.",
+      "similarity": 0.7010086287064738
+    },
+    {
+      "chunk_text": "Below Other Devices, select your AirPods.",
+      "similarity": 0.7008108126010956
     }
   ],
   "How to reset AirPods?": [
@@ -65,6 +105,14 @@
     {
       "chunk_text": "If your AirPods aren’t working right, try restarting them.",
       "similarity": 0.7359945147097141
+    },
+    {
+      "chunk_text": "Restart AirPods",
+      "similarity": 0.7274615857830047
+    },
+    {
+      "chunk_text": "click the name of your AirPods in the sidebar (you may need to scroll down), then click Forget This Device.",
+      "similarity": 0.7051736891366703
     }
   ],
   "How to check AirPods battery status?": [
@@ -73,32 +121,8 @@
       "similarity": 0.7361044373249438
     },
     {
-      "chunk_text": "then click the name of your AirPods in the sidebar.",
-      "similarity": 0.7017757311719997
-    },
-    {
       "chunk_text": "then click the name of your AirPods in the sidebar. (You may need to scroll down.)",
       "similarity": 0.7006393784246934
-    },
-    {
-      "chunk_text": "click Devices, select your AirPods, click",
-      "similarity": 0.6940769935767954
-    },
-    {
-      "chunk_text": "Tap the name of your AirPods",
-      "similarity": 0.6891137534014714
-    },
-    {
-      "chunk_text": "click devices, select your AirPods, click",
-      "similarity": 0.6879316398039154
-    },
-    {
-      "chunk_text": ", sign in to your Apple Account, select All Devices, then select your AirPods.",
-      "similarity": 0.6878463135730107
-    },
-    {
-      "chunk_text": "tap the name of your AirPods",
-      "similarity": 0.6867256759799842
     }
   ],
   "How to use AirPods with a Mac?": [
@@ -123,16 +147,12 @@
       "similarity": 0.7238475836090608
     },
     {
-      "chunk_text": "When your AirPods appear in the list of Bluetooth devices, select them.",
-      "similarity": 0.7234898651312263
+      "chunk_text": "Tap or click Bluetooth, then select your AirPods when they appear in the list.",
+      "similarity": 0.7012220036813949
     },
     {
-      "chunk_text": "In some situations, you receive a notification about your AirPods on the screen of your Mac. Click the Connect button to confirm that you want your AirPods to switch to—or stay with—your Mac.",
-      "similarity": 0.7125945368411725
-    },
-    {
-      "chunk_text": "then click the name of your AirPods in the sidebar. Below Connect to This Mac, choose When Last Connected to This Mac.",
-      "similarity": 0.7118121307473358
+      "chunk_text": "You can also connect a USB-C to USB-C cable from your AirPods Max to an iPhone, iPad, or Mac with a USB-C port. For full functionality, turn on Bluetooth on the connected device. (Requires iOS 18.4, iPadOS 18.4, macOS 15.4, or later.)",
+      "similarity": 0.7008729422893258
     }
   ]
 }
