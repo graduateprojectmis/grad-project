@@ -1,3 +1,12 @@
+"""
+Module for calculating cosine similarity between vectors and finding the most similar content.
+Steps:
+1. Load data with embeddings and questions with embeddings from JSON files.
+2. For each question, compute cosine similarity with titles and return top_k (Default is 5) similar titles.
+3. From the top similar titles, extract their chunks and compute cosine similarity with the question embedding.
+4. Return the top_k most similar chunks for each question.
+"""
+
 from typing import List, Dict, Any, Union, Optional
 import numpy as np
 from numpy.typing import NDArray
@@ -49,7 +58,8 @@ def _calculate_similarities_for_items(
     query_embedding: NDArray[np.float64],
     items: List[Dict[str, Any]],
     embedding_key: str,
-    text_key: str
+    text_key: str,
+    top_k: Optional[int] = None
 ) -> List[Dict[str, Any]]:
     
     """
@@ -82,13 +92,17 @@ def _calculate_similarities_for_items(
                 print(f"Warning : Calculate cosine similarity Error - {e}")
                 continue
     
-    return similarities
+    # Sort by similarity in descending order
+    similarities.sort(key=lambda x: x['similarity'], reverse=True)
+    
+    return similarities if top_k is None else similarities[:top_k]
 
 
 def find_most_similar_chunks(
     query_embedding: Union[List[float], NDArray[np.float64]], 
     data_with_embeddings: List[Dict[str, Any]], 
-    top_k: int = 5,
+    title_top_k: int = 5,
+    chunk_top_k: int = 5,
     include_titles: bool = True
 ) -> List[Dict[str, Any]]:
     
@@ -122,34 +136,61 @@ def find_most_similar_chunks(
             query_array,
             data_with_embeddings,
             'title_embedding',
-            'title_text'
+            'title',
+            title_top_k
         )
-        all_similarities.extend(title_similarities)
+        
+        # Find the items corresponding to the most similar titles
+        top_titles = [item['title'] for item in title_similarities]
+        
+        # Filter data items that match the top similar titles
+        relevant_items = [
+            item for item in data_with_embeddings 
+            if item.get('title') in top_titles
+        ]
+        
+        # Extract chunks only from the relevant items (titles with high similarity)
+        chunk_list = []
+        for item in relevant_items:
+            chunks = item.get('chunks', [])
+            chunk_list.extend(chunks)
+    else:
+        # If not including titles, search all chunks
+        chunk_list = []
+        for item in data_with_embeddings:
+            chunks = item.get('chunks', [])
+            chunk_list.extend(chunks)
     
-    # Calculate chunk similarities
-    chunk_list = []
-    for item in data_with_embeddings:
-        chunks = item.get('chunks', [])
-        chunk_list.extend(chunks)
-    
+    # Calculate chunk similarities from the filtered chunk list
     chunk_similarities = _calculate_similarities_for_items(
         query_array,
         chunk_list,
         'chunk_embedding',
-        'chunk_text'
+        'chunk_text',
+        chunk_top_k  # Get more results to ensure we have enough after deduplication
     )
     all_similarities.extend(chunk_similarities)
     
     # According to similarity sort and return top_k
     all_similarities.sort(key=lambda x: x['similarity'], reverse=True)
     
-    return all_similarities[:top_k]
+    # Remove duplicates based on chunk_text while preserving order
+    seen_texts = set()
+    unique_similarities = []
+    for item in all_similarities:
+        text = item.get('chunk_text', '')
+        if text and text not in seen_texts:
+            seen_texts.add(text)
+            unique_similarities.append(item)
+    
+    return unique_similarities[:chunk_top_k]
 
 
 def process_questions_similarity(
     questions_with_embeddings: List[Dict[str, Any]],
     data_with_embeddings: List[Dict[str, Any]],
-    top_k: int = 5
+    title_top_k: int = 5,
+    chunk_top_k: int = 10
 ) -> Dict[str, List[Dict[str, Any]]]:
     
     """
@@ -178,7 +219,8 @@ def process_questions_similarity(
             top_similar_chunks = find_most_similar_chunks(
                 question_embedding, 
                 data_with_embeddings, 
-                top_k=top_k
+                title_top_k,
+                chunk_top_k,
             )
             results[question] = top_similar_chunks
         except Exception as e:
@@ -190,7 +232,7 @@ def process_questions_similarity(
 
 def print_similarity_results(
     results: Dict[str, List[Dict[str, Any]]],
-    max_text_length: int = 100
+    max_text_length: int = 200
 ) -> None:
     
     """
@@ -222,13 +264,10 @@ def print_similarity_results(
         print()
 
 
-def calculate() -> None:
+def calculate(question_file: str, data_file:str) -> list:
     """
     Main function: Load data, calculate similarities, and display results.
     """
-    
-    data_file = "../output/json/text_embedding_gemini.json"
-    question_file = "../output/json/question_embeddings.json"
     
     try:
         print("Loading JSON file...")
@@ -250,12 +289,11 @@ def calculate() -> None:
         results = process_questions_similarity(
             questions_with_embeddings,
             data_with_embeddings,
-            top_k=10
+            title_top_k=5,
+            chunk_top_k=10
         )
         
-        print_similarity_results(results)
-        
-        print(f"\nSuccessfully processed {len(results)} questions")
+        return results
         
     except FileNotFoundError as e:
         print(f"Error : File not found - {e}")
