@@ -33,6 +33,12 @@ def main():
         "How to check AirPods battery status?",
         "How to use AirPods with a Mac?",
     ]
+    questions = [
+        "怎麼配對AirPods？",
+        "怎麼重置AirPods？",
+        "怎麼確認AirPods的電量？",
+        "怎麼在Mac上使用AirPods？",
+    ]
 
     if not questions:
         question_embeddings = process_and_embed_questions(questions)
