@@ -1,6 +1,11 @@
 import os
+import sys
 import openai
-from ChromaDB import initialize_chroma_db, query_chromadb
+
+# 動態添加專案根目錄到 sys.path
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
+from tools.ChromaDB import initialize_chroma_db, query_chromadb
 
 client_llm = openai.ChatCompletion(api_key=os.getenv("OPENAI_API_KEY"))
 
