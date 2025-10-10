@@ -1,5 +1,5 @@
 from langchain_text_splitters import RecursiveCharacterTextSplitter
-from tools.clean_data import preprocess_text
+from .clean_data import preprocess_text
 import os
 import json
 import openai

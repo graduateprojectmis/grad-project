@@ -1,12 +1,8 @@
 import chromadb
 import dotenv
 import os
-import sys
-# 動態添加專案根目錄到 sys.path
-sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-
-from tools.load_save_data import load_json_data
-from tools.generate_embedding_openai import EmbeddingGenerator
+from .load_save_data import load_json_data
+from .generate_embedding_openai import EmbeddingGenerator
 
 dotenv.load_dotenv()
 
