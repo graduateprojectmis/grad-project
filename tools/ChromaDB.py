@@ -7,6 +7,7 @@ sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from tools.load_save_data import load_json_data
 from tools.generate_embedding_openai import EmbeddingGenerator
+from tools.generate_output import generate_output
 
 dotenv.load_dotenv()
 
@@ -122,6 +123,6 @@ if __name__ == "__main__":
 
     # 查詢範例
     result = query_chromadb(collection, query_text, n_results)
-    print(f"查詢結果：{result}")
+    print(f"查詢結果：{generate_output(result)}")
 
 
