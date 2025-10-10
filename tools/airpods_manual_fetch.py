@@ -28,7 +28,6 @@ def scrape_airpods_manual(url: str, output_filename = "") -> list:
         # 獲取目錄頁面
         response = requests.get(toc_url, headers=headers)
         response.raise_for_status()
-        
         soup = BeautifulSoup(response.text, 'html.parser')
         
         # 找到目錄列表
@@ -62,12 +61,24 @@ def scrape_airpods_manual(url: str, output_filename = "") -> list:
                 content_div = page_soup.find('div', class_='AppleTopic apd-topic dark-mode-enabled book book-content')
                 
                 if content_div:
+                    # fetch and clean text
                     content_text = content_div.get_text(separator='\n', strip=True)
                     
+                    # fetch images
+                    images = []
+                    for img_tag in content_div.find_all('img'):
+                        img_src = img_tag.get('src')
+                        img_alt = img_tag.get('alt', '')
+                        if img_src:
+                            full_img_url = urljoin(page_url, img_src)
+                            images.append({'url': full_img_url, 'alt': img_alt})
+                     
+
                     rag_database.append({
                         'title': page_title,
                         'url': page_url,
-                        'content': content_text
+                        'content': content_text,
+                        'images': images
                     })
                 else:
                     print(f"    [Warning] 在頁面 '{page_title}' 中找不到 class='AppleTopic apd-topic dark-mode-enabled book book-content' 的內容區塊")
@@ -87,4 +98,4 @@ def scrape_airpods_manual(url: str, output_filename = "") -> list:
         return None
 
 if __name__ == '__main__':
-    data = scrape_airpods_manual("https://support.apple.com/zh-tw/guide/airpods/welcome/web")
+    data = scrape_airpods_manual("https://support.apple.com/zh-tw/guide/airpods/welcome/web", "output/json/airpods_manual.json")
