@@ -16,6 +16,12 @@ from urllib.parse import urljoin
 from .load_save_data import load_json_data, save_to_json
 
 def scrape_airpods_manual(url: str, output_filename = "") -> list:
+    seen = set()
+    image_folder = "images"
+    if not os.path.exists(image_folder):
+        os.makedirs(image_folder)
+    image_counter = 1
+
     toc_url = url
     
     headers = {
@@ -71,8 +77,22 @@ def scrape_airpods_manual(url: str, output_filename = "") -> list:
                         img_alt = img_tag.get('alt', '')
                         if img_src:
                             full_img_url = urljoin(page_url, img_src)
-                            images.append({'url': full_img_url, 'alt': img_alt})
-                     
+                            if full_img_url not in seen:
+                                images.append({'url': full_img_url, 'alt': img_alt})
+                                seen.add(full_img_url)
+
+                    # Download images to local folder
+                    for img in images:
+                        try:
+                            img_data = requests.get(img['url'], headers=headers)
+                            img_data.raise_for_status()
+                            img_filename = f"image{image_counter}.jpg"
+                            img_path = os.path.join(image_folder, img_filename)
+                            with open(img_path, 'wb') as f:
+                                f.write(img_data.content)
+                            image_counter += 1
+                        except requests.RequestException as e:
+                            print(f"    [Error] 下載圖片 {img['url']} 時發生錯誤: {e}")
 
                     rag_database.append({
                         'title': page_title,
@@ -98,4 +118,4 @@ def scrape_airpods_manual(url: str, output_filename = "") -> list:
         return None
 
 if __name__ == '__main__':
-    data = scrape_airpods_manual("https://support.apple.com/zh-tw/guide/airpods/welcome/web", "output/json/airpods_manual.json")
+    data = scrape_airpods_manual("https://support.apple.com/zh-tw/guide/airpods/welcome/web", "output/json/text_and_image_airpods_manual_data.json")
