@@ -1,6 +1,6 @@
 """
 1. 透過抓取Airpods Support網站的toc hasIcons類別獲得目錄
-2. 便利每個分頁並且獲取其中的AppleTopic apd-topic dark-mode-enabled book book-content類別中的文字
+2. 便利每個分頁並且獲取其中的AppleTopic apd-topic dark-mode-enabled book book-content類別中的文字跟圖片
 3. 輸出結果爲JSON檔
 
 提供兩種使用方法：
@@ -16,6 +16,7 @@ from urllib.parse import urljoin
 from .load_save_data import load_json_data, save_to_json
 
 def scrape_airpods_manual(url: str, output_filename = "") -> list:
+    # 儲存已下載的圖片URL，避免重複下載
     seen = set()
     image_folder = "images"
     if not os.path.exists(image_folder):
@@ -81,7 +82,7 @@ def scrape_airpods_manual(url: str, output_filename = "") -> list:
                                 images.append({'url': full_img_url, 'alt': img_alt})
                                 seen.add(full_img_url)
 
-                    # Download images to local folder
+                    # Download images to local folder(images/)
                     for img in images:
                         try:
                             img_data = requests.get(img['url'], headers=headers)
