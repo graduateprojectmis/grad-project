@@ -6,7 +6,6 @@ import json
 from openai import OpenAI
 import dotenv
 import base64
-from PIL import Image
 
 Model_Name = 'text-embedding-3-small'
 
@@ -27,9 +26,9 @@ class ImageProcessor:
         '''
         summarize image using OpenAI API
         Args:
-            img_path: path to image file
+            img_path: path to image file(str)
         Returns:
-            image description
+            image description(str)
         '''
         try:
             response = self.client.chat.completions.create(
