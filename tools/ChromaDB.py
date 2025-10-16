@@ -3,6 +3,7 @@ import dotenv
 import os
 from .load_save_data import load_json_data
 from .generate_embedding_openai import EmbeddingGenerator
+from .generate_output import generate_output
 
 dotenv.load_dotenv()
 
@@ -118,6 +119,6 @@ if __name__ == "__main__":
 
     # 查詢範例
     result = query_chromadb(collection, query_text, n_results)
-    print(f"查詢結果：{result}")
+    print(f"查詢結果：{generate_output(result)}")
 
 
