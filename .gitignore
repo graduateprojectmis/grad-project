@@ -115,3 +115,14 @@ ENV/
 uv.lock
 # ChromaDB local storage
 chroma_db/
+
+# Uploaded files
+uploads/
+web/backend/uploads/
+
+# Documentation files (not for version control)
+INTEGRATION_SUMMARY.md
+IMAGE_UPLOAD_GUIDE.md
+web/IMAGE_UPLOAD_GUIDE.md
+web/backend/SETUP.md
+web/frontend/README.md
