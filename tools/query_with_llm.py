@@ -7,7 +7,8 @@ sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from tools.ChromaDB import initialize_chroma_db, query_chromadb
 
-client_llm = openai.ChatCompletion(api_key=os.getenv("OPENAI_API_KEY"))
+# 設定 OpenAI API Key (使用 openai==0.28.0 版本)
+openai.api_key = os.getenv("OPENAI_API_KEY")
 
 def ask_with_context(question: str, top_k: int = 1):
     """
@@ -34,8 +35,12 @@ def ask_with_context(question: str, top_k: int = 1):
     請以清楚、自然且簡短的中文回答：
     """
 
-    # 呼叫 LLM 生成回覆
-    response = client_llm.create(
+    # 檢查 API Key
+    if not openai.api_key:
+        raise ValueError("❌ OPENAI_API_KEY 未設定！請先設定 API Key。")
+    
+    # 呼叫 LLM 生成回覆 (openai==0.28.0 版本語法)
+    response = openai.ChatCompletion.create(
         model="gpt-4o-mini",
         messages=[{"role": "user", "content": prompt}],
         temperature=0.3,

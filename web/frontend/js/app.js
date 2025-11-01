@@ -5,9 +5,38 @@ let selectedImage = null;
 // 初始化
 document.addEventListener('DOMContentLoaded', () => {
     checkApiHealth();
+    checkApiKeyStatus();
     // 每 30 秒檢查一次連接狀態
     setInterval(checkApiHealth, 30000);
+    
+    // 監聽輸入框變化，控制發送按鈕狀態
+    const questionInput = document.getElementById('questionInput');
+    const askButton = document.getElementById('askButton');
+    
+    // 初始化按鈕狀態
+    updateButtonState();
+    
+    // 監聽輸入事件
+    questionInput.addEventListener('input', updateButtonState);
 });
+
+// 更新發送按鈕狀態
+function updateButtonState() {
+    const questionInput = document.getElementById('questionInput');
+    const askButton = document.getElementById('askButton');
+    
+    if (!questionInput || !askButton) return;
+    
+    const hasText = questionInput.value.trim().length > 0;
+    const hasImage = selectedImage !== null;
+    
+    // 如果有文字或有圖片，就啟用按鈕
+    if (hasText || hasImage) {
+        askButton.disabled = false;
+    } else {
+        askButton.disabled = true;
+    }
+}
 
 // 檢查 API 健康狀態
 async function checkApiHealth() {
@@ -33,33 +62,204 @@ async function checkApiHealth() {
         statusIndicator.textContent = '🔴';
         statusText.textContent = '連接失敗';
         console.error('無法連接到 API:', error);
-        
-        // 顯示錯誤訊息
-        if (document.getElementById('chatContainer').children.length === 1) {
-            addMessage(
-                '⚠️ 無法連接到後端服務。請確認：<br>' +
-                '1. 後端服務是否正在運行 (python api.py)<br>' +
-                '2. API 地址是否正確<br>' +
-                `3. 當前 API 地址：${API_CONFIG.BASE_URL}`,
-                false,
-                'error'
-            );
-        }
     }
 }
 
+// ========================================
+//  API Key 管理功能
+// ========================================
+
+// 打開 API Key 模態框
+function openApiKeyModal() {
+    const modal = document.getElementById('apiKeyModal');
+    modal.style.display = 'flex';
+    checkApiKeyStatus();
+}
+
+// 關閉 API Key 模態框
+function closeApiKeyModal() {
+    const modal = document.getElementById('apiKeyModal');
+    const apiKeyInput = document.getElementById('apiKeyInput');
+    modal.style.display = 'none';
+    apiKeyInput.value = ''; // 清空輸入框
+}
+
+// 儲存 API Key 到伺服器
+async function saveApiKey() {
+    const apiKeyInput = document.getElementById('apiKeyInput');
+    const apiKey = apiKeyInput.value.trim();
+    
+    if (!apiKey) {
+        alert('❌ 請輸入 API Key');
+        return;
+    }
+    
+    if (!apiKey.startsWith('sk-')) {
+        alert('⚠️ API Key 格式似乎不正確，應該以 "sk-" 開頭');
+        return;
+    }
+    
+    try {
+        const response = await fetch(
+            `${API_CONFIG.BASE_URL}/api/config/apikey`,
+            {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    api_key: apiKey
+                })
+            }
+        );
+        
+        if (!response.ok) {
+            const error = await response.json();
+            throw new Error(error.detail || '儲存失敗');
+        }
+        
+        const data = await response.json();
+        alert('✅ ' + data.message);
+        
+        // 清空輸入框並更新狀態
+        apiKeyInput.value = '';
+        checkApiKeyStatus();
+        closeApiKeyModal();
+        
+    } catch (error) {
+        console.error('儲存 API Key 錯誤:', error);
+        alert('❌ 儲存失敗：' + error.message);
+    }
+}
+
+// 清除 API Key
+async function clearApiKey() {
+    if (!confirm('確定要清除已儲存的 API Key 嗎？\n這會從伺服器的 .env 文件中刪除 API Key。')) {
+        return;
+    }
+    
+    try {
+        const response = await fetch(
+            `${API_CONFIG.BASE_URL}/api/config/apikey`,
+            {
+                method: 'DELETE'
+            }
+        );
+        
+        if (!response.ok) {
+            const error = await response.json();
+            throw new Error(error.detail || '刪除失敗');
+        }
+        
+        const data = await response.json();
+        alert('✅ ' + data.message);
+        
+        // 清空輸入框並更新狀態
+        document.getElementById('apiKeyInput').value = '';
+        checkApiKeyStatus();
+        
+    } catch (error) {
+        console.error('刪除 API Key 錯誤:', error);
+        alert('❌ 刪除失敗：' + error.message);
+    }
+}
+
+// 切換 API Key 顯示/隱藏
+function toggleApiKeyVisibility() {
+    const apiKeyInput = document.getElementById('apiKeyInput');
+    const visibilityIcon = document.getElementById('visibilityIcon');
+    
+    if (apiKeyInput.type === 'password') {
+        apiKeyInput.type = 'text';
+        visibilityIcon.textContent = '👁️‍🗨️';
+    } else {
+        apiKeyInput.type = 'password';
+        visibilityIcon.textContent = '👁️';
+    }
+}
+
+// 檢查 API Key 狀態
+async function checkApiKeyStatus() {
+    const apiKeyStatus = document.getElementById('apiKeyStatus');
+    const statusMessage = document.getElementById('statusMessage');
+    const statusIcon = apiKeyStatus.querySelector('.status-icon');
+    
+    try {
+        const response = await fetch(
+            `${API_CONFIG.BASE_URL}/api/config/apikey/status`
+        );
+        
+        if (!response.ok) {
+            throw new Error('無法檢查 API Key 狀態');
+        }
+        
+        const data = await response.json();
+        
+        if (data.has_key) {
+            apiKeyStatus.classList.add('has-key');
+            statusIcon.textContent = '✅';
+            statusMessage.textContent = `已設定 API Key (${data.key_preview})`;
+        } else {
+            apiKeyStatus.classList.remove('has-key');
+            statusIcon.textContent = '🔒';
+            statusMessage.textContent = '未設定 API Key';
+        }
+        
+    } catch (error) {
+        console.error('檢查 API Key 狀態錯誤:', error);
+        apiKeyStatus.classList.remove('has-key');
+        statusIcon.textContent = '❌';
+        statusMessage.textContent = '無法檢查狀態';
+    }
+}
+
+// 點擊模態框背景關閉
+document.addEventListener('click', (event) => {
+    const modal = document.getElementById('apiKeyModal');
+    if (event.target === modal) {
+        closeApiKeyModal();
+    }
+});
+
+// ESC 鍵關閉模態框
+document.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape') {
+        closeApiKeyModal();
+    }
+});
+
+// ========================================
+//  聊天訊息功能
+// ========================================
+
 // 添加訊息到聊天容器
 function addMessage(content, isUser = false, type = 'normal') {
-    const chatContainer = document.getElementById('chatContainer');
+    // 隱藏歡迎區域
+    const welcomeSection = document.getElementById('welcomeSection');
+    if (welcomeSection && isUser) {
+        welcomeSection.style.display = 'none';
+    }
+    
+    const messagesContainer = document.getElementById('messagesContainer');
     const messageDiv = document.createElement('div');
     messageDiv.className = `message ${isUser ? 'user' : 'bot'} ${type}`;
     
+    // 創建頭像
+    const avatarDiv = document.createElement('div');
+    avatarDiv.className = 'message-avatar';
+    avatarDiv.textContent = isUser ? '👤' : '🤖';
+    
+    // 創建內容
     const contentDiv = document.createElement('div');
     contentDiv.className = 'message-content';
     contentDiv.innerHTML = content;
     
+    messageDiv.appendChild(avatarDiv);
     messageDiv.appendChild(contentDiv);
-    chatContainer.appendChild(messageDiv);
+    messagesContainer.appendChild(messageDiv);
+    
+    // 滾動到底部
+    const chatContainer = document.getElementById('chatContainer');
     chatContainer.scrollTop = chatContainer.scrollHeight;
 }
 
@@ -90,6 +290,9 @@ async function askQuestion() {
     button.disabled = true;
     buttonText.textContent = '思考中...';
     
+    // 清空輸入框後更新按鈕狀態（在處理完成後恢復）
+    // 這裡按鈕已經手動設為 disabled，所以不需要立即調用 updateButtonState()
+    
     // 顯示載入動畫
     addMessage('<div class="loading-dots"><span></span><span></span><span></span></div>', false);
     
@@ -109,8 +312,8 @@ async function askQuestion() {
         );
         
         // 移除載入動畫
-        const chatContainer = document.getElementById('chatContainer');
-        chatContainer.removeChild(chatContainer.lastChild);
+        const messagesContainer = document.getElementById('messagesContainer');
+        messagesContainer.removeChild(messagesContainer.lastChild);
         
         if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
@@ -121,9 +324,9 @@ async function askQuestion() {
         
     } catch (error) {
         // 移除載入動畫（如果還存在）
-        const chatContainer = document.getElementById('chatContainer');
-        if (chatContainer.lastChild.querySelector('.loading-dots')) {
-            chatContainer.removeChild(chatContainer.lastChild);
+        const messagesContainer = document.getElementById('messagesContainer');
+        if (messagesContainer.lastChild && messagesContainer.lastChild.querySelector('.loading-dots')) {
+            messagesContainer.removeChild(messagesContainer.lastChild);
         }
         
         console.error('錯誤:', error);
@@ -134,14 +337,16 @@ async function askQuestion() {
             'error'
         );
     } finally {
-        button.disabled = false;
         buttonText.textContent = '發送';
+        // 根據輸入框內容更新按鈕狀態
+        updateButtonState();
     }
 }
 
 // 使用範例問題
 function askExample(question) {
     document.getElementById('questionInput').value = question;
+    updateButtonState();
     askQuestion();
 }
 
@@ -152,6 +357,10 @@ function handleKeyPress(event) {
         askQuestion();
     }
 }
+
+// ========================================
+//  圖片上傳功能
+// ========================================
 
 // 處理圖片選擇
 function handleImageSelect(event) {
@@ -191,6 +400,9 @@ function handleImageSelect(event) {
         imageName.textContent = file.name;
         imageSize.textContent = formatFileSize(file.size);
         previewDiv.style.display = 'block';
+        
+        // 更新按鈕狀態
+        updateButtonState();
     };
     reader.readAsDataURL(file);
 }
@@ -200,6 +412,9 @@ function clearImage() {
     selectedImage = null;
     document.getElementById('imageInput').value = '';
     document.getElementById('imagePreview').style.display = 'none';
+    
+    // 更新按鈕狀態
+    updateButtonState();
 }
 
 // 格式化檔案大小
@@ -243,8 +458,8 @@ async function uploadImage() {
         );
         
         // 移除載入動畫
-        const chatContainer = document.getElementById('chatContainer');
-        chatContainer.removeChild(chatContainer.lastChild);
+        const messagesContainer = document.getElementById('messagesContainer');
+        messagesContainer.removeChild(messagesContainer.lastChild);
         
         if (!response.ok) {
             const errorData = await response.json();
@@ -264,9 +479,9 @@ async function uploadImage() {
         
     } catch (error) {
         // 移除載入動畫（如果還存在）
-        const chatContainer = document.getElementById('chatContainer');
-        if (chatContainer.lastChild.querySelector('.loading-dots')) {
-            chatContainer.removeChild(chatContainer.lastChild);
+        const messagesContainer = document.getElementById('messagesContainer');
+        if (messagesContainer.lastChild && messagesContainer.lastChild.querySelector('.loading-dots')) {
+            messagesContainer.removeChild(messagesContainer.lastChild);
         }
         
         console.error('上傳錯誤:', error);

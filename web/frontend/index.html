@@ -7,73 +7,146 @@
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-    <div class="container">
+    <div class="app-container">
+        <!-- 頂部 Header -->
         <div class="header">
-            <h1>🎧 AirPods 智慧助手</h1>
-            <p>有任何關於 AirPods 的問題嗎？我來幫您解答！</p>
-        </div>
-        
-        <div class="status-bar" id="statusBar">
-            <span class="status-indicator" id="statusIndicator">⚪</span>
-            <span id="statusText">連接中...</span>
-        </div>
-        
-        <div class="chat-container" id="chatContainer">
-            <div class="message bot">
-                <div class="message-content">
-                    您好！我是 AirPods 智慧助手。請問有什麼可以幫助您的嗎？
+            <div class="header-content">
+                <h1>🎧 AirPods 智慧助手</h1>
+                <button class="settings-button" onclick="openApiKeyModal()" title="設定 API Key">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="3"></circle>
+                        <path d="M12 1v6m0 6v6m0-18a9 9 0 0 1 9 9m-9 9a9 9 0 0 1-9-9m9-9a9 9 0 0 0-9 9m18 0a9 9 0 0 1-9 9"></path>
+                    </svg>
+                </button>
+                <div class="status-bar" id="statusBar">
+                    <span class="status-indicator" id="statusIndicator">⚪</span>
+                    <span id="statusText">連接中...</span>
                 </div>
             </div>
         </div>
         
-        <div class="examples">
-            <h3>💡 試試這些問題：</h3>
-            <button class="example-button" onclick="askExample('怎麼配對 AirPods？')">
-                怎麼配對 AirPods？
-            </button>
-            <button class="example-button" onclick="askExample('如何重置 AirPods？')">
-                如何重置 AirPods？
-            </button>
-            <button class="example-button" onclick="askExample('怎麼確認 AirPods 的電量？')">
-                怎麼確認電量？
-            </button>
-            <button class="example-button" onclick="askExample('AirPods 的降噪功能怎麼用？')">
-                降噪功能
-            </button>
-        </div>
-        
-        <div class="input-container">
-            <input 
-                type="text" 
-                id="questionInput" 
-                placeholder="輸入您的問題..." 
-                onkeypress="handleKeyPress(event)"
-            >
-            <label for="imageInput" class="upload-button" title="上傳圖片">
-                📎
-            </label>
-            <input 
-                type="file" 
-                id="imageInput" 
-                accept="image/*" 
-                style="display: none;"
-                onchange="handleImageSelect(event)"
-            >
-            <button id="askButton" onclick="askQuestion()">
-                <span id="buttonText">發送</span>
-            </button>
-        </div>
-        
-        <!-- 圖片預覽區域 -->
-        <div id="imagePreview" class="image-preview" style="display: none;">
-            <div class="preview-header">
-                <span>已選擇圖片：</span>
-                <button onclick="clearImage()" class="clear-button">✕</button>
+        <!-- API Key 設定模態框 -->
+        <div id="apiKeyModal" class="modal" style="display: none;">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2>🔑 設定 OpenAI API Key</h2>
+                    <button class="modal-close" onclick="closeApiKeyModal()">✕</button>
+                </div>
+                
+                <div class="modal-body">
+                    <div class="api-key-status" id="apiKeyStatus">
+                        <span class="status-icon">🔒</span>
+                        <span id="statusMessage">檢查中...</span>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="apiKeyInput">OpenAI API Key</label>
+                        <div class="api-key-input-group">
+                            <input 
+                                type="password" 
+                                id="apiKeyInput" 
+                                placeholder="sk-..."
+                                autocomplete="off"
+                            >
+                            <button class="toggle-visibility" onclick="toggleApiKeyVisibility()" title="顯示/隱藏">
+                                <span id="visibilityIcon">👁️</span>
+                            </button>
+                        </div>
+                        <small class="help-text">
+                            API Key 將安全地儲存在伺服器的 .env 文件中
+                        </small>
+                    </div>
+                    
+                    <div class="privacy-notice">
+                        <strong>🔐 安全說明：</strong>
+                        <ul>
+                            <li>API Key 儲存在伺服器端的 .env 文件中</li>
+                            <li>文件權限設為 600（僅伺服器擁有者可讀寫）</li>
+                            <li>自動加入 .gitignore（不會提交到 Git）</li>
+                            <li>您可以隨時更改或清除</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="modal-footer">
+                    <button class="btn-secondary" onclick="clearApiKey()">清除</button>
+                    <button class="btn-primary" onclick="saveApiKey()">儲存到伺服器</button>
+                </div>
             </div>
-            <img id="previewImage" alt="預覽">
-            <div class="image-info">
-                <span id="imageName"></span>
-                <span id="imageSize"></span>
+        </div>
+        
+        <!-- 對話區域（可滾動） -->
+        <div class="chat-container" id="chatContainer">
+            <div class="chat-content">
+                <div class="welcome-section" id="welcomeSection">
+                    <div class="welcome-message">
+                        <div class="welcome-icon">👋</div>
+                        <h2>您好！我是 AirPods 智慧助手</h2>
+                        <p>有任何關於 AirPods 的問題都可以問我</p>
+                    </div>
+                    
+                    <div class="examples">
+                        <h3>💡 試試這些問題：</h3>
+                        <div class="example-buttons">
+                            <button class="example-button" onclick="askExample('怎麼配對 AirPods？')">
+                                <span class="example-icon">🔗</span>
+                                <span>怎麼配對 AirPods？</span>
+                            </button>
+                            <button class="example-button" onclick="askExample('如何重置 AirPods？')">
+                                <span class="example-icon">🔄</span>
+                                <span>如何重置 AirPods？</span>
+                            </button>
+                            <button class="example-button" onclick="askExample('怎麼確認 AirPods 的電量？')">
+                                <span class="example-icon">🔋</span>
+                                <span>怎麼確認電量？</span>
+                            </button>
+                            <button class="example-button" onclick="askExample('AirPods 的降噪功能怎麼用？')">
+                                <span class="example-icon">🎵</span>
+                                <span>降噪功能怎麼用？</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <div id="messagesContainer"></div>
+            </div>
+        </div>
+        
+        <!-- 輸入區域（固定在底部） -->
+        <div class="input-area">
+            <!-- 圖片預覽 -->
+            <div id="imagePreview" class="image-preview" style="display: none;">
+                <div class="preview-content">
+                    <img id="previewImage" alt="預覽">
+                    <div class="image-info">
+                        <span id="imageName"></span>
+                        <span id="imageSize"></span>
+                    </div>
+                    <button onclick="clearImage()" class="clear-button" title="移除圖片">✕</button>
+                </div>
+            </div>
+            
+            <!-- 輸入框 -->
+            <div class="input-container">
+                <label for="imageInput" class="upload-button" title="上傳圖片">
+                    📎
+                </label>
+                <input 
+                    type="file" 
+                    id="imageInput" 
+                    accept="image/*" 
+                    style="display: none;"
+                    onchange="handleImageSelect(event)"
+                >
+                <input 
+                    type="text" 
+                    id="questionInput" 
+                    placeholder="輸入您的問題..." 
+                    onkeypress="handleKeyPress(event)"
+                >
+                <button id="askButton" onclick="askQuestion()">
+                    <span id="buttonText">發送</span>
+                </button>
             </div>
         </div>
     </div>

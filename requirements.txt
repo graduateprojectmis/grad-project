@@ -103,7 +103,7 @@ pandocfilters==1.5.1
 parso==0.8.5
 pexpect==4.9.0
 pickleshare==0.7.5
-pipreqs==0.5.0
+pipreqs==0.4.13
 platformdirs==4.4.0
 posthog==5.4.0
 prompt-toolkit==3.0.52
@@ -160,7 +160,6 @@ typing-inspection==0.4.2
 uritemplate==4.2.0
 urllib3==2.3.0
 uvicorn==0.37.0
-uvloop==0.21.0
 watchfiles==1.1.0
 wcwidth==0.2.14
 webencodings==0.5.1

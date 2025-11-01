@@ -1,128 +1,83 @@
-# OS generated files
-.DS_Store
-.DS_Store?
-._*
-.Spotlight-V100
-.Trashes
-ehthumbs.db
-Thumbs.db
-
-# IDE and Editor files
-.vscode/
-.idea/
-*.swp
-*.swo
-*~
-
-# Logs
-logs
-*.log
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-
-# Runtime data
-pids
-*.pid
-*.seed
-*.pid.lock
-
-# Dependency directories
-node_modules/
-bower_components/
-vendor/
-
-# Environment variables
-.env
-.env.local
-.env.development.local
-.env.test.local
-.env.production.local
-
-# Build outputs
-dist/
-build/
-out/
-target/
-bin/
-obj/
-
-# Database
-*.db
-*.sqlite
-*.sqlite3
-
-# Temporary files
-tmp/
-temp/
-*.tmp
-*.temp
-
-# Archives
-*.zip
-*.tar.gz
-*.rar
-
 # Python
 __pycache__/
 *.py[cod]
 *$py.class
 *.so
 .Python
-env/
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Virtual Environment
 venv/
 ENV/
-.venv/
+env/
+.venv
 
-# Java
-*.class
-*.jar
-*.war
-*.ear
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
 
-# Research and academic files
-*.aux
-*.bbl
-*.blg
-*.fdb_latexmk
-*.fls
-*.synctex.gz
-*.toc
-*.out
-*.pdf
+# Environment Variables
+.env
+.env.local
 
-# Data files (uncomment if you don't want to track data)
-# *.csv
-# *.json
-# *.xml
-# data/
-# datasets/
+# Logs
+logs/
+*.log
+
+# ChromaDB
+web/backend/chroma_db/
+chroma_db/
+*.sqlite3
 
 # Jupyter Notebook
 .ipynb_checkpoints
 
-# Package files
-*.dmg
-*.pkg
-*.deb
-*.rpm
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
 
-# Backup files
-*.bak
-*.backup
-*.old
-
-uv.lock
-# ChromaDB local storage
-chroma_db/
-
-# Uploaded files
+# Uploads
 uploads/
 web/backend/uploads/
 
-# Documentation files (not for version control)
-INTEGRATION_SUMMARY.md
-IMAGE_UPLOAD_GUIDE.md
-web/IMAGE_UPLOAD_GUIDE.md
-web/backend/SETUP.md
-web/frontend/README.md
+# Temporary files
+*.tmp
+*.bak
+*.swp
+*~
+
+# Coverage
+htmlcov/
+.coverage
+.coverage.*
+.cache
+
+# mypy
+.mypy_cache/
+.dmypy.json
+dmypy.json
+
+# pytest
+.pytest_cache/
+
+# PIDs
+*.pid
