@@ -4,7 +4,6 @@ from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 import os
 import sys
-import dotenv
 from pathlib import Path
 import shutil
 from datetime import datetime
@@ -15,18 +14,6 @@ sys.path.append(project_root)
 
 from tools.query_with_llm import ask_with_context
 from tools.ChromaDB import initialize_chroma_db, query_chromadb
-
-# 載入專案根目錄的 .env 檔案
-env_path = os.path.join(project_root, '.env')
-dotenv.load_dotenv(env_path)
-
-# 檢查 API Key 是否已設定
-if not os.getenv("OPENAI_API_KEY"):
-    print("⚠️  警告：OPENAI_API_KEY 未設定！")
-    print("請在專案根目錄創建 .env 檔案並加入：")
-    print("OPENAI_API_KEY=sk-your-api-key-here")
-else:
-    print(f"✅ API Key 已載入 (開頭: {os.getenv('OPENAI_API_KEY')[:10]}...)")
 
 # 初始化 FastAPI
 app = FastAPI(
@@ -83,6 +70,7 @@ async def startup_event():
 class QuestionRequest(BaseModel):
     question: str
     top_k: int = 1
+    api_key: str = None  # 必須：從前端傳來的 API Key
 
 class QuestionResponse(BaseModel):
     question: str
@@ -110,19 +98,6 @@ class UploadResponse(BaseModel):
     file_path: str
     file_size: int
 
-class ApiKeyRequest(BaseModel):
-    api_key: str
-
-class ApiKeyResponse(BaseModel):
-    status: str
-    message: str
-    has_key: bool
-
-class ApiKeyStatusResponse(BaseModel):
-    status: str
-    has_key: bool
-    key_preview: str = None
-
 # API 路由
 @app.get("/api/health", response_model=HealthResponse)
 async def health_check():
@@ -137,19 +112,43 @@ async def health_check():
 async def ask_question(request: QuestionRequest):
     """
     使用 LLM 生成完整答案
+    需要從前端傳入 API Key
     """
     try:
         if not request.question or request.question.strip() == "":
             raise HTTPException(status_code=400, detail="問題不能為空")
         
-        answer = ask_with_context(request.question, request.top_k)
+        if not request.api_key:
+            raise HTTPException(
+                status_code=400, 
+                detail="未提供 API Key。請在前端設定 API Key。"
+            )
+        
+        print(f"❓ 收到問題: {request.question}")
+        print(f"🔑 使用 API Key: {request.api_key[:20]}...")
+        
+        # 臨時設定 API Key 給 query_with_llm 使用
+        import tools.query_with_llm as query_module
+        original_key = query_module.openai.api_key
+        query_module.openai.api_key = request.api_key
+        
+        try:
+            answer = ask_with_context(request.question, request.top_k)
+        finally:
+            # 恢復原來的 API Key
+            query_module.openai.api_key = original_key
         
         return QuestionResponse(
             question=request.question,
             answer=answer,
             status="success"
         )
+    except HTTPException:
+        raise
     except Exception as e:
+        print(f"❌ 錯誤詳情: {str(e)}")
+        import traceback
+        traceback.print_exc()
         raise HTTPException(
             status_code=500, 
             detail=f"生成答案時發生錯誤：{str(e)}"
@@ -224,141 +223,6 @@ async def upload_image(file: UploadFile = File(...)):
             detail=f"上傳圖片時發生錯誤：{str(e)}"
         )
 
-@app.post("/api/config/apikey", response_model=ApiKeyResponse)
-async def save_api_key(request: ApiKeyRequest):
-    """
-    儲存 API Key 到 .env 文件
-    ⚠️ 注意：此端點應該只在本地環境使用
-    """
-    try:
-        api_key = request.api_key.strip()
-        
-        # 驗證 API Key 格式
-        if not api_key:
-            raise HTTPException(status_code=400, detail="API Key 不能為空")
-        
-        if not api_key.startswith('sk-'):
-            raise HTTPException(
-                status_code=400, 
-                detail="API Key 格式不正確，應該以 'sk-' 開頭"
-            )
-        
-        # .env 文件路徑
-        env_path = os.path.join(project_root, '.env')
-        
-        # 讀取現有的 .env 內容（如果存在）
-        env_lines = []
-        if os.path.exists(env_path):
-            with open(env_path, 'r', encoding='utf-8') as f:
-                env_lines = f.readlines()
-        
-        # 更新或添加 OPENAI_API_KEY
-        key_found = False
-        for i, line in enumerate(env_lines):
-            if line.strip().startswith('OPENAI_API_KEY='):
-                env_lines[i] = f'OPENAI_API_KEY={api_key}\n'
-                key_found = True
-                break
-        
-        if not key_found:
-            env_lines.append(f'\n# OpenAI API Key\nOPENAI_API_KEY={api_key}\n')
-        
-        # 寫入 .env 文件
-        with open(env_path, 'w', encoding='utf-8') as f:
-            f.writelines(env_lines)
-        
-        # 設定檔案權限為 600（僅擁有者可讀寫）
-        try:
-            os.chmod(env_path, 0o600)
-        except:
-            pass  # Windows 可能不支援 chmod
-        
-        # 重新載入環境變數
-        dotenv.load_dotenv(env_path, override=True)
-        
-        # 更新 openai 的 api_key
-        import tools.query_with_llm as query_module
-        query_module.openai.api_key = api_key
-        
-        return ApiKeyResponse(
-            status="success",
-            message="API Key 已成功儲存到 .env 文件",
-            has_key=True
-        )
-        
-    except HTTPException:
-        raise
-    except Exception as e:
-        raise HTTPException(
-            status_code=500,
-            detail=f"儲存 API Key 時發生錯誤：{str(e)}"
-        )
-
-@app.delete("/api/config/apikey", response_model=ApiKeyResponse)
-async def delete_api_key():
-    """
-    從 .env 文件中刪除 API Key
-    """
-    try:
-        env_path = os.path.join(project_root, '.env')
-        
-        if not os.path.exists(env_path):
-            return ApiKeyResponse(
-                status="success",
-                message="API Key 不存在",
-                has_key=False
-            )
-        
-        # 讀取並過濾掉 OPENAI_API_KEY
-        with open(env_path, 'r', encoding='utf-8') as f:
-            lines = f.readlines()
-        
-        new_lines = [line for line in lines if not line.strip().startswith('OPENAI_API_KEY=')]
-        
-        # 寫回文件
-        with open(env_path, 'w', encoding='utf-8') as f:
-            f.writelines(new_lines)
-        
-        # 重新載入環境變數
-        dotenv.load_dotenv(env_path, override=True)
-        
-        return ApiKeyResponse(
-            status="success",
-            message="API Key 已從 .env 文件中刪除",
-            has_key=False
-        )
-        
-    except Exception as e:
-        raise HTTPException(
-            status_code=500,
-            detail=f"刪除 API Key 時發生錯誤：{str(e)}"
-        )
-
-@app.get("/api/config/apikey/status", response_model=ApiKeyStatusResponse)
-async def get_api_key_status():
-    """
-    檢查 API Key 是否已設定
-    """
-    try:
-        api_key = os.getenv("OPENAI_API_KEY")
-        
-        if api_key and api_key.startswith('sk-'):
-            return ApiKeyStatusResponse(
-                status="success",
-                has_key=True,
-                key_preview=f"{api_key[:10]}..." if len(api_key) > 10 else "sk-***"
-            )
-        else:
-            return ApiKeyStatusResponse(
-                status="success",
-                has_key=False
-            )
-    except Exception as e:
-        raise HTTPException(
-            status_code=500,
-            detail=f"檢查 API Key 狀態時發生錯誤：{str(e)}"
-        )
-
 @app.get("/")
 async def root():
     """根路徑"""
@@ -370,10 +234,7 @@ async def root():
             "health": "GET /api/health",
             "ask": "POST /api/ask",
             "search": "POST /api/search",
-            "upload": "POST /api/upload",
-            "save_api_key": "POST /api/config/apikey",
-            "delete_api_key": "DELETE /api/config/apikey",
-            "api_key_status": "GET /api/config/apikey/status"
+            "upload": "POST /api/upload"
         }
     }
 

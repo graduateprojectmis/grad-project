@@ -6,15 +6,15 @@
 
 /* Claude 配色變數 */
 :root {
-    --claude-primary: #D97757;        /* Claude 橙棕色 */
-    --claude-primary-dark: #C86A47;   /* 深橙棕色 */
-    --claude-bg: #F5F3EF;             /* 奶油背景 */
-    --claude-surface: #FFFFFF;        /* 白色表面 */
-    --claude-text: #2C2416;           /* 深棕色文字 */
-    --claude-text-light: #5C5448;     /* 淺棕色文字 */
-    --claude-border: #E8E3DB;         /* 邊框顏色 */
-    --claude-user-bg: #2C2416;        /* 用戶訊息背景 */
-    --claude-bot-bg: #F9F7F4;         /* AI 訊息背景 */
+    --claude-primary: #D97757;       
+    --claude-primary-dark: #C86A47;  
+    --claude-bg: #F5F3EF;            
+    --claude-surface: #FFFFFF;        
+    --claude-text: #2C2416;           
+    --claude-text-light: #5C5448;     
+    --claude-border: #E8E3DB;         
+    --claude-user-bg: #E8E8E8;        
+    --claude-bot-bg: #F9F7F4;         
 }
 
 body {
@@ -257,7 +257,7 @@ body {
 
 .message.user .message-content {
     background: var(--claude-user-bg);
-    color: white;
+    color: var(--claude-text);
     border-bottom-right-radius: 4px;
 }
 

@@ -1,10 +1,6 @@
-#!/bin/bash
-
-# AirPods Q&A 系統 - 一鍵啟動腳本 (macOS)
-
 echo ""
 echo "===================================="
-echo " 🎧 AirPods Q&A 系統一鍵啟動"
+echo " 系統一鍵啟動"
 echo "===================================="
 echo ""
 
@@ -30,29 +26,6 @@ $PYTHON_CMD --version
 if [ ! -f "web/backend/api.py" ]; then
     echo "❌ 請在專案根目錄執行此腳本"
     exit 1
-fi
-
-# 檢查 .env 文件
-if [ ! -f ".env" ]; then
-    echo ""
-    echo "⚠️  警告：.env 檔案不存在"
-    echo ""
-    echo "請使用以下方式之一設定 API Key："
-    echo ""
-    echo "方式 1 - 使用設置腳本（推薦）："
-    echo "  ./setup_env.sh"
-    echo ""
-    echo "方式 2 - 手動創建 .env 檔案："
-    echo "  echo 'OPENAI_API_KEY=sk-your-api-key' > .env"
-    echo "  chmod 600 .env"
-    echo ""
-    read -p "是否繼續？(y/n): " -n 1 -r
-    echo
-    if [[ ! $REPLY =~ ^[Yy]$ ]]; then
-        exit 1
-    fi
-else
-    echo "✅ 找到 .env 檔案"
 fi
 
 echo ""

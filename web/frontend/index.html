@@ -53,24 +53,14 @@
                             </button>
                         </div>
                         <small class="help-text">
-                            API Key 將安全地儲存在伺服器的 .env 文件中
+                            API Key 將儲存在您的瀏覽器中（localStorage）
                         </small>
-                    </div>
-                    
-                    <div class="privacy-notice">
-                        <strong>🔐 安全說明：</strong>
-                        <ul>
-                            <li>API Key 儲存在伺服器端的 .env 文件中</li>
-                            <li>文件權限設為 600（僅伺服器擁有者可讀寫）</li>
-                            <li>自動加入 .gitignore（不會提交到 Git）</li>
-                            <li>您可以隨時更改或清除</li>
-                        </ul>
                     </div>
                 </div>
                 
                 <div class="modal-footer">
                     <button class="btn-secondary" onclick="clearApiKey()">清除</button>
-                    <button class="btn-primary" onclick="saveApiKey()">儲存到伺服器</button>
+                    <button class="btn-primary" onclick="saveApiKey()">儲存到瀏覽器</button>
                 </div>
             </div>
         </div>
