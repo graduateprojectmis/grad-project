@@ -61,14 +61,16 @@
                             </button>
                         </div>
                         <small class="help-text">
-                            API Key 將儲存在您的瀏覽器中（localStorage）
+                            API Key 將安全儲存在伺服器環境變數（.env）
                         </small>
                     </div>
+
+                    
                 </div>
                 
                 <div class="modal-footer">
-                    <button class="btn-secondary" onclick="clearApiKey()">清除</button>
-                    <button class="btn-primary" onclick="saveApiKey()">儲存到瀏覽器</button>
+                    <button class="btn-secondary" onclick="clearApiKey()">清除伺服器中的 Key</button>
+                    <button class="btn-primary" onclick="saveApiKey()">儲存到伺服器</button>
                 </div>
             </div>
         </div>

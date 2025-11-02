@@ -19,7 +19,9 @@ const API_CONFIG = {
         HEALTH: '/api/health',
         ASK: '/api/ask',
         SEARCH: '/api/search',
-        UPLOAD: '/api/upload'
+        UPLOAD: '/api/upload',
+        ADMIN_KEY: '/api/admin/api-key',
+        ADMIN_KEY_STATUS: '/api/admin/api-key/status'
     }
 };
 

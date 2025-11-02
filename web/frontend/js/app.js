@@ -71,11 +71,9 @@ function closeApiKeyModal() {
 
 async function saveApiKey() {
     const apiKeyInput = document.getElementById('apiKeyInput');
+    const adminTokenInput = document.getElementById('adminTokenInput');
     const apiKey = apiKeyInput.value.trim();
-    
-    console.log('準備儲存 API Key 到 localStorage...');
-    console.log('API Key 長度:', apiKey.length);
-    console.log('API Key 開頭:', apiKey.substring(0, 10));
+    const adminToken = adminTokenInput ? adminTokenInput.value.trim() : '';
     
     if (!apiKey) {
         alert('請輸入 API Key');
@@ -88,12 +86,25 @@ async function saveApiKey() {
     }
     
     try {
-        localStorage.setItem('openai_api_key', apiKey);
-        console.log('API Key 已儲存到瀏覽器');
-        
-        alert('API Key 已成功儲存到瀏覽器！\n\n每次請求時會自動使用此 API Key。');
-        
+        const response = await fetch(
+            `${API_CONFIG.BASE_URL}${API_CONFIG.ENDPOINTS.ADMIN_KEY}`,
+            {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    ...(adminToken ? { 'X-Admin-Token': adminToken } : {})
+                },
+                body: JSON.stringify({ api_key: apiKey })
+            }
+        );
+        if (!response.ok) {
+            const data = await response.json().catch(() => ({}));
+            throw new Error(data.detail || '設定失敗');
+        }
+
+        alert('API Key 已安全儲存到伺服器環境變數 (.env)。');
         apiKeyInput.value = '';
+        if (adminTokenInput) adminTokenInput.value = '';
         await checkApiKeyStatus();
         closeApiKeyModal();
         
@@ -104,22 +115,32 @@ async function saveApiKey() {
 }
 
 async function clearApiKey() {
-    if (!confirm('確定要清除已儲存的 API Key 嗎？\n這會從瀏覽器中刪除 API Key。')) {
+    if (!confirm('確定要清除伺服器中的 API Key 嗎？')) {
         return;
     }
-    
     try {
-        localStorage.removeItem('openai_api_key');
-        console.log('API Key 已從瀏覽器刪除');
-        
-        alert('API Key 已從瀏覽器中刪除');
-        
+        const adminTokenInput = document.getElementById('adminTokenInput');
+        const adminToken = adminTokenInput ? adminTokenInput.value.trim() : '';
+        const response = await fetch(
+            `${API_CONFIG.BASE_URL}${API_CONFIG.ENDPOINTS.ADMIN_KEY}`,
+            {
+                method: 'DELETE',
+                headers: {
+                    ...(adminToken ? { 'X-Admin-Token': adminToken } : {})
+                }
+            }
+        );
+        if (!response.ok) {
+            const data = await response.json().catch(() => ({}));
+            throw new Error(data.detail || '清除失敗');
+        }
+        alert('伺服器中的 API Key 已清除');
         document.getElementById('apiKeyInput').value = '';
+        if (adminTokenInput) adminTokenInput.value = '';
         checkApiKeyStatus();
-        
     } catch (error) {
         console.error('刪除 API Key 錯誤:', error);
-        alert(' 刪除失敗：' + error.message);
+        alert('刪除失敗：' + error.message);
     }
 }
 
@@ -142,25 +163,21 @@ async function checkApiKeyStatus() {
     const statusIcon = apiKeyStatus.querySelector('.status-icon');
     
     try {
-        console.log('檢查瀏覽器中的 API Key 狀態...');
-        
-        const apiKey = localStorage.getItem('openai_api_key');
-        
-        if (apiKey && apiKey.startsWith('sk-')) {
-            const preview = apiKey.substring(0, 10) + '...';
+        const response = await fetch(
+            `${API_CONFIG.BASE_URL}${API_CONFIG.ENDPOINTS.ADMIN_KEY_STATUS}`
+        );
+        if (!response.ok) throw new Error('狀態查詢失敗');
+        const data = await response.json();
+        if (data.exists) {
             apiKeyStatus.classList.add('has-key');
             statusIcon.textContent = '✅';
-            statusMessage.textContent = `已設定 API Key (${preview})`;
-            console.log('已設定 API Key (儲存在瀏覽器)');
+            statusMessage.textContent = `已設定 API Key (${data.masked})`;
         } else {
             apiKeyStatus.classList.remove('has-key');
             statusIcon.textContent = '🔒';
             statusMessage.textContent = '未設定 API Key';
-            console.log('未設定 API Key');
         }
-        
     } catch (error) {
-        console.error(' 檢查 API Key 狀態錯誤:', error);
         apiKeyStatus.classList.remove('has-key');
         statusIcon.textContent = '❌';
         statusMessage.textContent = '無法檢查狀態';
@@ -225,11 +242,17 @@ async function askQuestion() {
         return;
     }
     
-    const apiKey = localStorage.getItem('openai_api_key');
-    if (!apiKey) {
-        alert('請先設定 API Key！\n\n點擊右上角的按鈕來設定。');
-        openApiKeyModal();
-        return;
+    // 檢查伺服器是否已有 Key，若沒有引導設定
+    try {
+        const statusResp = await fetch(`${API_CONFIG.BASE_URL}${API_CONFIG.ENDPOINTS.ADMIN_KEY_STATUS}`);
+        const statusData = statusResp.ok ? await statusResp.json() : { exists: false };
+        if (!statusData.exists) {
+            alert('請先在伺服器設定 API Key！');
+            openApiKeyModal();
+            return;
+        }
+    } catch (_) {
+        // 若狀態查詢失敗，仍嘗試請求，後端會回報更明確錯誤
     }
     
     addMessage(question, true);
@@ -241,24 +264,17 @@ async function askQuestion() {
     addMessage('<div class="loading-dots"><span></span><span></span><span></span></div>', false);
     
     try {
-        console.log('使用瀏覽器中的 API Key 發送請求');
-        console.log('DEBUG: apiKey =', apiKey);
-        console.log('DEBUG: apiKey 長度 =', apiKey ? apiKey.length : 'null');
-        console.log('DEBUG: apiKey 類型 =', typeof apiKey);
-        
         const requestBody = {
             question: question,
-            top_k: 1,
-            api_key: apiKey  
+            top_k: 1
         };
-        console.log('DEBUG: 請求體 =', JSON.stringify(requestBody));
         
         const response = await fetch(
             `${API_CONFIG.BASE_URL}${API_CONFIG.ENDPOINTS.ASK}`,
             {
                 method: 'POST',
                 headers: {
-                    'Content-Type': 'application/json',
+                    'Content-Type': 'application/json'
                 },
                 body: JSON.stringify(requestBody)
             }

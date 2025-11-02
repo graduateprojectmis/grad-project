@@ -10,7 +10,6 @@ echo ""
 
 STOPPED=0
 
-# 從 PID 檔案停止
 if [ -f "logs/backend.pid" ]; then
     BACKEND_PID=$(cat logs/backend.pid)
     if kill -0 $BACKEND_PID 2>/dev/null; then

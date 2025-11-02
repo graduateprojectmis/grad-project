@@ -1,10 +1,13 @@
 # api.py - 純 API 後端服務，不提供前端
-from fastapi import FastAPI, HTTPException, UploadFile, File
+from fastapi import FastAPI, HTTPException, UploadFile, File, Request
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
+from typing import Optional
 import os
 import sys
 from pathlib import Path
+import dotenv
+from dotenv import set_key, unset_key
 import shutil
 from datetime import datetime
 
@@ -14,6 +17,9 @@ sys.path.append(project_root)
 
 from tools.query_with_llm import ask_with_context
 from tools.ChromaDB import initialize_chroma_db, query_chromadb
+
+# 載入 .env（位於 web/backend 目錄）
+dotenv.load_dotenv()
 
 # 初始化 FastAPI
 app = FastAPI(
@@ -44,6 +50,7 @@ app.add_middleware(
 
 # 全域變數
 chroma_collection = None
+ENV_FILE_PATH = (Path(__file__).resolve().parent / ".env").as_posix()
 
 # 建立圖片上傳目錄
 UPLOAD_DIR = Path("uploads")
@@ -70,7 +77,7 @@ async def startup_event():
 class QuestionRequest(BaseModel):
     question: str
     top_k: int = 1
-    api_key: str = None  # 必須：從前端傳來的 API Key
+    api_key: Optional[str] = None  # 已不建議使用：改走後端環境變數
 
 class QuestionResponse(BaseModel):
     question: str
@@ -118,19 +125,18 @@ async def ask_question(request: QuestionRequest):
         if not request.question or request.question.strip() == "":
             raise HTTPException(status_code=400, detail="問題不能為空")
         
-        if not request.api_key:
-            raise HTTPException(
-                status_code=400, 
-                detail="未提供 API Key。請在前端設定 API Key。"
-            )
-        
         print(f"❓ 收到問題: {request.question}")
-        print(f"🔑 使用 API Key: {request.api_key[:20]}...")
         
-        # 臨時設定 API Key 給 query_with_llm 使用
+        # 以後端環境變數為優先，其次（相容）接受 body.api_key
+        server_api_key = os.getenv("OPENAI_API_KEY")
+        effective_key = server_api_key or request.api_key
+        if not effective_key:
+            raise HTTPException(status_code=400, detail="未設定 OPENAI_API_KEY，請先在後端設定。")
+
+        # 臨時設定 API Key 給 query_with_llm 使用（不記錄、不回傳）
         import tools.query_with_llm as query_module
         original_key = query_module.openai.api_key
-        query_module.openai.api_key = request.api_key
+        query_module.openai.api_key = effective_key
         
         try:
             answer = ask_with_context(request.question, request.top_k)
@@ -237,6 +243,70 @@ async def root():
             "upload": "POST /api/upload"
         }
     }
+
+# =============================
+# Admin：API Key 管理（僅限本機／受權）
+# =============================
+
+def _require_admin(request: Request):
+    """簡單保護：
+    - 若設定 ADMIN_TOKEN，必須在 Header 帶 X-Admin-Token 一致。
+    - 允許本機來源（127.0.0.1 / localhost）。
+    """
+    admin_token = os.getenv("ADMIN_TOKEN")
+    client_host = request.client.host if request.client else None
+    is_local = client_host in {"127.0.0.1", "::1", "localhost"}
+
+    if admin_token:
+        provided = request.headers.get("X-Admin-Token")
+        if not provided or provided != admin_token:
+            raise HTTPException(status_code=401, detail="未授權：需要有效的 X-Admin-Token")
+    else:
+        # 若未設定 ADMIN_TOKEN，限制只能從本機呼叫
+        if not is_local:
+            raise HTTPException(status_code=401, detail="未授權：僅允許本機存取，請設定 ADMIN_TOKEN 以開放遠端")
+
+
+class SetKeyRequest(BaseModel):
+    api_key: str
+
+
+@app.get("/api/admin/api-key/status")
+async def get_api_key_status(request: Request):
+    _require_admin(request)
+    value = os.getenv("OPENAI_API_KEY") or ""
+    masked = (value[:10] + "...") if value.startswith("sk-") and len(value) > 10 else ("" if not value else "已設定")
+    return {"exists": bool(value), "masked": masked}
+
+
+@app.post("/api/admin/api-key")
+async def set_api_key(payload: SetKeyRequest, request: Request):
+    _require_admin(request)
+    api_key = payload.api_key.strip()
+    if not api_key or not api_key.startswith("sk-"):
+        raise HTTPException(status_code=400, detail="API Key 格式不正確")
+
+    # 寫入 .env 並更新目前行程的環境與 openai client
+    set_key(ENV_FILE_PATH, "OPENAI_API_KEY", api_key)
+    os.environ["OPENAI_API_KEY"] = api_key
+
+    # 同步到 query 模組的 in-memory 設定
+    import tools.query_with_llm as query_module
+    query_module.openai.api_key = api_key
+
+    return {"status": "success"}
+
+
+@app.delete("/api/admin/api-key")
+async def clear_api_key(request: Request):
+    _require_admin(request)
+    unset_key(ENV_FILE_PATH, "OPENAI_API_KEY")
+    os.environ.pop("OPENAI_API_KEY", None)
+
+    import tools.query_with_llm as query_module
+    query_module.openai.api_key = None
+
+    return {"status": "success"}
 
 if __name__ == "__main__":
     import uvicorn

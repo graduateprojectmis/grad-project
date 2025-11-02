@@ -41,9 +41,9 @@ chmod +x start_all.sh stop_all.sh
 1. 開啟 http://localhost:8080
 2. 點擊右上角設定按鈕
 3. 輸入您的 OpenAI API Key
-4. 點擊儲存
+4. 點擊「儲存到伺服器」
 
-> **隱私保護**：API Key 會安全地儲存在您瀏覽器的 localStorage 中，每次請求時自動使用，不會儲存在伺服器上。
+> **安全性**：API Key 會加密儲存在後端伺服器的環境變數檔案（`.env`）中，僅限本機可管理，不會暴露在前端。
 
 ---
 
@@ -90,7 +90,7 @@ python3 init_chromadb.py
 ./start_all.sh
 ```
 
-然後在網頁上設定 API Key（點擊右上角設定按鈕）。
+然後在網頁上設定 API Key（點擊右上角設定按鈕，輸入後點擊「儲存到伺服器」）。
 
 ---
 
@@ -153,9 +153,9 @@ pip3 install -r requirements.txt --upgrade
 1. 開啟網頁 http://localhost:8080
 2. 點擊右上角設定按鈕
 3. 輸入您的 OpenAI API Key
-4. 點擊儲存
+4. 點擊「儲存到伺服器」
 
-> **提示**：API Key 會儲存在瀏覽器的 localStorage 中，不會上傳到伺服器。
+> **提示**：API Key 會安全儲存在後端的 `.env` 檔案中，僅限本機可管理。
 
 ### 問題：ChromaDB 資料不存在
 
