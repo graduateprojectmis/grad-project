@@ -4,7 +4,6 @@
     box-sizing: border-box;
 }
 
-/* Claude 配色變數 */
 :root {
     --claude-primary: #D97757;       
     --claude-primary-dark: #C86A47;  
@@ -24,7 +23,6 @@ body {
     overflow: hidden;
 }
 
-/* 主容器 - 佔滿整個視窗 */
 .app-container {
     height: 100vh;
     display: flex;
@@ -32,7 +30,6 @@ body {
     background: var(--claude-surface);
 }
 
-/* 頂部 Header - 固定高度 */
 .header {
     flex-shrink: 0;
     background: var(--claude-surface);
@@ -45,8 +42,8 @@ body {
 .header-content {
     max-width: 1200px;
     margin: 0 auto;
-    display: flex;
-    justify-content: space-between;
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
     align-items: center;
     gap: 20px;
 }
@@ -55,11 +52,46 @@ body {
     font-size: 1.5em;
     font-weight: 600;
     color: var(--claude-text);
-    flex: 1;
     text-align: center;
+    grid-column: 2;
 }
 
-/* 設定按鈕 */
+.home-button {
+    background: transparent;
+    border: 1.5px solid var(--claude-border);
+    border-radius: 8px;
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s;
+    color: var(--claude-text-light);
+    flex-shrink: 0;
+    justify-self: start;
+}
+
+.home-button:hover {
+    background: var(--claude-bg);
+    border-color: var(--claude-primary);
+    color: var(--claude-primary);
+}
+
+.settings-group {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-shrink: 0;
+    justify-self: end;
+}
+
+.settings-label {
+    font-size: 0.9em;
+    color: var(--claude-text-light);
+    font-weight: 500;
+}
+
 .settings-button {
     background: transparent;
     border: 1.5px solid var(--claude-border);
@@ -84,13 +116,13 @@ body {
 
 .status-bar {
     display: none;
+    justify-self: end;
 }
 
 .status-indicator {
     font-size: 0.7em;
 }
 
-/* 聊天容器 - 自動擴展並可滾動 */
 .chat-container {
     flex: 1;
     overflow-y: auto;
@@ -104,7 +136,6 @@ body {
     padding: 30px 40px;
 }
 
-/* 歡迎區域 */
 .welcome-section {
     margin-bottom: 30px;
     animation: fadeIn 0.5s ease-in;
@@ -143,7 +174,6 @@ body {
     font-size: 1.1em;
 }
 
-/* 範例問題區域 */
 .examples {
     margin-top: 30px;
 }
@@ -192,14 +222,12 @@ body {
     flex-shrink: 0;
 }
 
-/* 訊息容器 */
 #messagesContainer {
     display: flex;
     flex-direction: column;
     gap: 16px;
 }
 
-/* 訊息樣式 */
 .message {
     display: flex;
     gap: 12px;
@@ -234,16 +262,24 @@ body {
     justify-content: center;
     font-size: 1.2em;
     flex-shrink: 0;
+    line-height: 1;
+    text-align: center;
 }
 
 .message.user .message-avatar {
     background: var(--claude-user-bg);
     order: 2;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .message.bot .message-avatar {
     background: var(--claude-primary);
     color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .message-content {
@@ -274,7 +310,6 @@ body {
     border: 1px solid #F5D4C8;
 }
 
-/* 載入動畫 */
 .loading-dots {
     display: inline-flex;
     gap: 4px;
@@ -308,7 +343,6 @@ body {
     }
 }
 
-/* 輸入區域 - 固定在底部 */
 .input-area {
     flex-shrink: 0;
     background: var(--claude-surface);
@@ -325,7 +359,6 @@ body {
     align-items: center;
 }
 
-/* 上傳按鈕 */
 .upload-button {
     display: flex;
     align-items: center;
@@ -347,7 +380,6 @@ body {
     color: var(--claude-primary);
 }
 
-/* 輸入框 */
 #questionInput {
     flex: 1;
     padding: 12px 16px;
@@ -371,7 +403,6 @@ body {
     opacity: 0.6;
 }
 
-/* 發送按鈕 */
 #askButton {
     padding: 12px 24px;
     background: var(--claude-primary);
@@ -402,7 +433,6 @@ body {
     background: var(--claude-border);
 }
 
-/* 圖片預覽 */
 .image-preview {
     max-width: 900px;
     margin: 0 auto;
@@ -459,7 +489,6 @@ body {
     transform: scale(1.1);
 }
 
-/* 滾動條樣式 */
 .chat-container::-webkit-scrollbar {
     width: 8px;
 }
@@ -477,16 +506,18 @@ body {
     background: #D0C7B8;
 }
 
-/* 響應式設計 */
 @media (max-width: 768px) {
     .header h1 {
         font-size: 1.2em;
     }
     
     .header-content {
-        flex-direction: column;
-        gap: 8px;
-        align-items: center;
+        gap: 10px;
+        grid-template-columns: auto 1fr auto;
+    }
+    
+    .settings-label {
+        display: none;
     }
     
     .status-bar {
@@ -533,7 +564,6 @@ body {
     }
 }
 
-/* 平板設計 */
 @media (min-width: 769px) and (max-width: 1024px) {
     .chat-content {
         padding: 25px 35px;
@@ -543,10 +573,6 @@ body {
         padding: 13px 17px;
     }
 }
-
-/* ========================================
-   API Key 模態框樣式
-   ======================================== */
 
 .modal {
     position: fixed;
@@ -771,7 +797,6 @@ body {
     color: var(--claude-primary);
 }
 
-/* 響應式 - 模態框 */
 @media (max-width: 768px) {
     .modal-content {
         width: 95%;

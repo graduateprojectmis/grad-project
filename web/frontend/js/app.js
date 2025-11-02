@@ -73,9 +73,9 @@ async function saveApiKey() {
     const apiKeyInput = document.getElementById('apiKeyInput');
     const apiKey = apiKeyInput.value.trim();
     
-    console.log('🔑 準備儲存 API Key 到 localStorage...');
-    console.log('📍 API Key 長度:', apiKey.length);
-    console.log('📍 API Key 開頭:', apiKey.substring(0, 10));
+    console.log('準備儲存 API Key 到 localStorage...');
+    console.log('API Key 長度:', apiKey.length);
+    console.log('API Key 開頭:', apiKey.substring(0, 10));
     
     if (!apiKey) {
         alert('請輸入 API Key');
@@ -227,7 +227,7 @@ async function askQuestion() {
     
     const apiKey = localStorage.getItem('openai_api_key');
     if (!apiKey) {
-        alert('❌ 請先設定 API Key！\n\n點擊右上角的 ⚙️ 按鈕來設定。');
+        alert('請先設定 API Key！\n\n點擊右上角的按鈕來設定。');
         openApiKeyModal();
         return;
     }
@@ -298,6 +298,53 @@ function askExample(question) {
     document.getElementById('questionInput').value = question;
     updateButtonState();
     askQuestion();
+}
+
+function goToHome() {
+    console.log('回到主頁功能已觸發');
+    
+    try {
+        // 清除所有訊息
+        const messagesContainer = document.getElementById('messagesContainer');
+        if (messagesContainer) {
+            messagesContainer.innerHTML = '';
+            console.log('訊息已清除');
+        }
+        
+        // 顯示歡迎區域
+        const welcomeSection = document.getElementById('welcomeSection');
+        if (welcomeSection) {
+            welcomeSection.style.display = 'block';
+            console.log('歡迎區域已顯示');
+        }
+        
+        // 清空輸入框
+        const questionInput = document.getElementById('questionInput');
+        if (questionInput) {
+            questionInput.value = '';
+            console.log('輸入框已清空');
+        }
+        
+        // 清除圖片選擇
+        if (selectedImage) {
+            clearImage();
+            console.log('圖片已清除');
+        }
+        
+        // 更新按鈕狀態
+        updateButtonState();
+        
+        // 滾動到頂部
+        const chatContainer = document.getElementById('chatContainer');
+        if (chatContainer) {
+            chatContainer.scrollTop = 0;
+            console.log('已滾動到頂部');
+        }
+        
+        console.log('主頁重置完成！');
+    } catch (error) {
+        console.error('回到主頁時發生錯誤:', error);
+    }
 }
 
 function handleKeyPress(event) {
