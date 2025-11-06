@@ -1,0 +1,25 @@
+/* 聊天容器 */
+.chat-container {
+  flex: 1;
+  overflow-y: auto;
+  background: var(--bg);
+  padding: 20px;
+}
+
+.chat-content {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.messages-container {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding-bottom: 20px;
+}
+
+@media (max-width: 768px) {
+  .chat-container {
+    padding: 12px;
+  }
+}

@@ -1,0 +1,103 @@
+/* Header 樣式 */
+.header {
+  flex-shrink: 0;
+  background: var(--surface);
+  color: var(--text);
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--border);
+  z-index: 10;
+}
+
+.header-content {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: auto 1fr auto auto;
+  align-items: center;
+  gap: 20px;
+}
+
+.header h1 {
+  font-size: 1.5em;
+  font-weight: 600;
+  color: var(--text);
+  justify-self: center;
+}
+
+.home-button,
+.settings-button {
+  background: transparent;
+  border: 1.5px solid var(--border);
+  border-radius: 8px;
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s;
+  color: var(--text-light);
+  flex-shrink: 0;
+}
+
+.home-button:hover,
+.settings-button:hover {
+  background: var(--bg);
+  border-color: var(--primary);
+  color: var(--primary);
+  transform: translateY(-1px);
+}
+
+.settings-group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.settings-label {
+  font-size: 0.9em;
+  color: var(--text-light);
+  font-weight: 500;
+}
+
+.status-bar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 12px;
+  background: var(--bg);
+  border-radius: 20px;
+  font-size: 0.85em;
+}
+
+.status-indicator {
+  font-size: 1em;
+}
+
+.status-indicator.connected {
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+.status-text {
+  color: var(--text-light);
+  white-space: nowrap;
+}
+
+@media (max-width: 768px) {
+  .header-content {
+    grid-template-columns: auto 1fr auto;
+  }
+  
+  .settings-label {
+    display: none;
+  }
+  
+  .header h1 {
+    font-size: 1.2em;
+  }
+}
