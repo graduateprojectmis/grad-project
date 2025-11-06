@@ -1,7 +1,7 @@
-from tools.airpods_manual_fetch import scrape_airpods_manual
-from tools.load_save_data import load_json_data, save_to_json
-from tools.similarity_calculation import calculate
-from tools.similarity_calculation import print_similarity_results
+from src.tools.airpods_manual_fetch import scrape_airpods_manual
+from src.tools.load_save_data import load_json_data, save_to_json
+from src.tools.similarity_calculation import calculate
+from src.tools.similarity_calculation import print_similarity_results
 import os
 
 def main():
@@ -9,7 +9,7 @@ def main():
     
     try:
         import importlib
-        embedding_module = importlib.import_module(f"tools.generate_embedding_{LLM}")
+        embedding_module = importlib.import_module(f"src.tools.generate_embedding_{LLM}")
         process_and_embed_data = embedding_module.process_and_embed_data
         process_and_embed_questions = embedding_module.process_and_embed_questions
     except ImportError:
@@ -19,8 +19,8 @@ def main():
     url = "https://support.apple.com/en-us/guide/airpods/welcome/web"
     input_data = scrape_airpods_manual(url)
     """
-    embedding_output_file = f"output/json/text_embedding_{LLM}.json"
-    question_output_file = f"output/json/question_embeddings_{LLM}.json"
+    embedding_output_file = f"src/output/json/text_embedding_{LLM}.json"
+    question_output_file = f"src/output/json/question_embeddings_{LLM}.json"
     """
     if input_data:
         final_data_with_embeddings = process_and_embed_data(input_data)
@@ -44,14 +44,13 @@ def main():
         question_embeddings = process_and_embed_questions(questions)
         save_to_json(question_embeddings, question_output_file)
     """
-    # Calculate similarity and display results
     qa_data = calculate(
         question_file=question_output_file,
         data_file=embedding_output_file,
         chunk_top_percentage=0.5
         )
     print_similarity_results(qa_data)
-    save_to_json(qa_data, f"output/json/similarity_results_{LLM}.json")
+    save_to_json(qa_data, f"src/output/json/similarity_results_{LLM}.json")
 
 if __name__ == '__main__':
     main()
