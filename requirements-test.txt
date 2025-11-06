@@ -1,0 +1,14 @@
+# 測試依賴套件
+# 在原有 requirements-new.txt 基礎上添加測試相關套件
+
+# 測試框架
+pytest==8.3.4
+pytest-cov==6.0.0
+pytest-asyncio==0.24.0
+pytest-mock==3.14.0
+
+# HTTP 測試
+httpx==0.28.1
+
+# 測試工具
+faker==33.1.0
