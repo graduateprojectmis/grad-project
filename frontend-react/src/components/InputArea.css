@@ -149,6 +149,65 @@
 
 .loading-text {
   font-size: 0.95em;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.loading-text::after {
+  content: '';
+  display: inline-block;
+  width: 4px;
+  height: 4px;
+  background: currentColor;
+  border-radius: 50%;
+  animation: buttonDots 1.4s ease-in-out infinite;
+}
+
+@keyframes buttonDots {
+  0%, 20% {
+    box-shadow: 
+      0 0 0 0 currentColor,
+      8px 0 0 0 currentColor,
+      16px 0 0 0 currentColor;
+  }
+  25% {
+    box-shadow: 
+      0 -3px 0 0 currentColor,
+      8px 0 0 0 rgba(255, 255, 255, 0.5),
+      16px 0 0 0 rgba(255, 255, 255, 0.3);
+  }
+  50% {
+    box-shadow: 
+      0 0 0 0 rgba(255, 255, 255, 0.5),
+      8px -3px 0 0 currentColor,
+      16px 0 0 0 rgba(255, 255, 255, 0.5);
+  }
+  75% {
+    box-shadow: 
+      0 0 0 0 rgba(255, 255, 255, 0.3),
+      8px 0 0 0 rgba(255, 255, 255, 0.5),
+      16px -3px 0 0 currentColor;
+  }
+  95%, 100% {
+    box-shadow: 
+      0 0 0 0 currentColor,
+      8px 0 0 0 currentColor,
+      16px 0 0 0 currentColor;
+  }
+}
+
+.send-button.loading {
+  animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.8;
+  }
 }
 
 @media (max-width: 768px) {

@@ -24,6 +24,7 @@ function ChatContainer({ messages, children }) {
               content={message.content}
               isUser={message.isUser}
               type={message.type}
+              isLoading={message.isLoading}
             />
           ))}
         </div>

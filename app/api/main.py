@@ -301,7 +301,7 @@ async def search_documents(request: SearchRequest):
         )
 
 
-# ========== Admin API ==========
+# ========== Admin API (本地端版本) ==========
 
 from app.models.schemas import APIKeyStatusResponse, SetAPIKeyRequest
 from dotenv import set_key, unset_key
@@ -309,32 +309,9 @@ from dotenv import set_key, unset_key
 ENV_FILE_PATH = (Path(__file__).parent.parent.parent / ".env").as_posix()
 
 
-def _require_admin(request: Request):
-    """管理員權限檢查"""
-    admin_token = settings.admin_token
-    client_host = request.client.host if request.client else None
-    is_local = client_host in {"127.0.0.1", "::1", "localhost"}
-    
-    if admin_token:
-        provided = request.headers.get("X-Admin-Token")
-        if not provided or provided != admin_token:
-            raise HTTPException(
-                status_code=401,
-                detail="未授權：需要有效的 X-Admin-Token"
-            )
-    else:
-        if not is_local:
-            raise HTTPException(
-                status_code=401,
-                detail="未授權：僅允許本機存取，請設定 ADMIN_TOKEN 以開放遠端"
-            )
-
-
 @app.get("/api/admin/api-key/status", response_model=APIKeyStatusResponse)
-async def get_api_key_status(request: Request):
-    """獲取 API Key 狀態"""
-    _require_admin(request)
-    
+async def get_api_key_status():
+    """獲取 API Key 狀態（本地端專用）"""
     value = settings.openai_api_key or ""
     masked = (
         (value[:10] + "...") 
@@ -349,10 +326,8 @@ async def get_api_key_status(request: Request):
 
 
 @app.post("/api/admin/api-key")
-async def set_api_key(payload: SetAPIKeyRequest, request: Request):
-    """設定 API Key"""
-    _require_admin(request)
-    
+async def set_api_key(payload: SetAPIKeyRequest):
+    """設定 API Key（本地端專用）"""
     api_key = payload.api_key.strip()
     if not api_key or not api_key.startswith("sk-"):
         raise HTTPException(status_code=400, detail="API Key 格式不正確")
@@ -373,10 +348,8 @@ async def set_api_key(payload: SetAPIKeyRequest, request: Request):
 
 
 @app.delete("/api/admin/api-key")
-async def clear_api_key(request: Request):
-    """清除 API Key"""
-    _require_admin(request)
-    
+async def clear_api_key():
+    """清除 API Key（本地端專用）"""
     unset_key(ENV_FILE_PATH, "OPENAI_API_KEY")
     os.environ.pop("OPENAI_API_KEY", None)
     settings.openai_api_key = None

@@ -8,6 +8,8 @@ function InputArea({
   apiKeyExists, 
   onSendMessage, 
   onReceiveMessage,
+  onReceiveLoadingMessage,
+  onRemoveMessage,
   onOpenApiKeyModal 
 }) {
   const [input, setInput] = useState('')
@@ -57,9 +59,19 @@ function InputArea({
         onSendMessage(question)
         setInput('')
         
+        // 添加加載中的消息
+        const loadingId = Date.now() + 1
+        onReceiveLoadingMessage({
+          id: loadingId,
+          content: '正在思考中',
+          isUser: false,
+          isLoading: true
+        })
+        
         const data = await askQuestion(question, 1)
         
-        // 顯示答案
+        // 移除加載消息並顯示答案
+        onRemoveMessage(loadingId)
         onReceiveMessage(data.answer)
       }
     } catch (error) {
@@ -175,12 +187,12 @@ function InputArea({
         
         <button
           type="submit"
-          className="send-button"
+          className={`send-button ${isLoading ? 'loading' : ''}`}
           disabled={isDisabled}
           aria-label="發送"
         >
           {isLoading ? (
-            <span className="loading-text">思考中...</span>
+            <span className="loading-text">思考中</span>
           ) : (
             <>
               <Send size={18} />

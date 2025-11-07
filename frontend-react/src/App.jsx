@@ -62,13 +62,77 @@ function App() {
     }])
   }
 
+  const handleReceiveLoadingMessage = (message) => {
+    setMessages(prev => [...prev, message])
+  }
+
+  const handleRemoveMessage = (messageId) => {
+    setMessages(prev => prev.filter(msg => msg.id !== messageId))
+  }
+
   const handleGoHome = () => {
     setMessages([])
     setShowWelcome(true)
   }
 
-  const handleExampleClick = (question) => {
+  const handleExampleClick = async (question) => {
+    // 檢查連接和 API Key
+    if (!isConnected) {
+      alert('❌ 無法連接到後端服務，請檢查後端是否正在運行！')
+      return
+    }
+
+    if (!apiKeyExists) {
+      alert('請先在伺服器設定 API Key！')
+      setShowApiKeyModal(true)
+      return
+    }
+
+    // 隱藏歡迎頁面並發送問題
     setShowWelcome(false)
+    
+    // 添加用戶問題和加載中的消息
+    const loadingId = Date.now() + 1
+    setMessages([
+      {
+        id: Date.now(),
+        content: question,
+        isUser: true
+      },
+      {
+        id: loadingId,
+        content: '🤔 正在思考中',
+        isUser: false,
+        isLoading: true
+      }
+    ])
+    
+    try {
+      // 調用 API
+      const { askQuestion } = await import('./services/api')
+      const data = await askQuestion(question, 1)
+      
+      // 移除加載消息並添加答案
+      setMessages(prev => [
+        ...prev.filter(msg => msg.id !== loadingId),
+        {
+          id: Date.now() + 2,
+          content: data.answer,
+          isUser: false
+        }
+      ])
+    } catch (error) {
+      console.error('錯誤:', error)
+      // 移除加載消息並顯示錯誤
+      setMessages(prev => [
+        ...prev.filter(msg => msg.id !== loadingId),
+        {
+          id: Date.now() + 2,
+          content: `❌ 抱歉，發生錯誤：${error.message}<br>請稍後再試或檢查 API Key 是否正確。`,
+          isUser: false
+        }
+      ])
+    }
   }
 
   return (
@@ -91,6 +155,8 @@ function App() {
         apiKeyExists={apiKeyExists}
         onSendMessage={handleSendMessage}
         onReceiveMessage={handleReceiveMessage}
+        onReceiveLoadingMessage={handleReceiveLoadingMessage}
+        onRemoveMessage={handleRemoveMessage}
         onOpenApiKeyModal={() => setShowApiKeyModal(true)}
       />
       
