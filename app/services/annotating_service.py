@@ -121,10 +121,8 @@ class ImageAnnotationService:
         try:
             logger.info(f"開始偵測圖像中的物件：{target_item}")
             
-            # 載入圖像
             image = self._load_and_resize_image(image_path)
             
-            # 建立提示詞
             prompt = f"""
             Detect the {target_item} in this image.
             Output a JSON list where each entry contains:
@@ -137,12 +135,10 @@ class ImageAnnotationService:
             Do NOT include any "mask" field. Only output the JSON array.
             """
             
-            # 設定生成配置
             config = types.GenerateContentConfig(
                 thinking_config=types.ThinkingConfig(thinking_budget=0)
             )
             
-            # 呼叫 API
             logger.debug("正在呼叫 Gemini API 進行物件偵測")
             response = self.client.models.generate_content(
                 model=self.model,
@@ -150,11 +146,9 @@ class ImageAnnotationService:
                 config=config
             )
             
-            # 解析回應
             parsed_json = self._parse_json_response(response.text)
             items = json.loads(parsed_json)
             
-            # 轉換為 DetectedObject
             detected_objects = [
                 DetectedObject(
                     box_2d=item["box_2d"],
@@ -193,26 +187,21 @@ class ImageAnnotationService:
         Returns:
             標註後的圖像
         """
-        # 轉換座標
         box = detected_object.box_2d
         y0 = int(box[0] / 1000 * image.size[1])
         x0 = int(box[1] / 1000 * image.size[0])
         y1 = int(box[2] / 1000 * image.size[1])
         x1 = int(box[3] / 1000 * image.size[0])
         
-        # 驗證邊界框
         if y0 >= y1 or x0 >= x1:
             logger.warning(f"無效的邊界框：{box}")
             return None
         
-        # 建立覆蓋層
         overlay = Image.new('RGBA', image.size, (0, 0, 0, 0))
         draw = ImageDraw.Draw(overlay)
         
-        # 繪製邊界框
         draw.rectangle([x0, y0, x1, y1], outline=box_color, width=box_width)
         
-        # 繪製標籤背景和文字
         label_text = detected_object.label
         text_y = max(5, y0 - 25)
         draw.rectangle(
@@ -221,7 +210,6 @@ class ImageAnnotationService:
         )
         draw.text((x0 + 5, text_y + 5), label_text, fill=(255, 255, 255, 255))
         
-        # 合併圖像
         composite = Image.alpha_composite(image.convert('RGBA'), overlay)
         return composite
     
@@ -245,7 +233,6 @@ class ImageAnnotationService:
         try:
             logger.info(f"開始標註圖像：{image_path}")
             
-            # 設定輸出目錄
             if output_dir is None:
                 settings = get_settings()
                 output_dir = str(settings.output_dir / "Annotated_Image")
@@ -254,28 +241,23 @@ class ImageAnnotationService:
             output_path.mkdir(parents=True, exist_ok=True)
             logger.debug(f"輸出目錄：{output_dir}")
             
-            # 偵測物件
             detected_objects = self.detect_objects(image_path, target_item)
             
             if not detected_objects:
                 logger.warning("未偵測到任何物件")
                 return []
             
-            # 載入原始圖像
             image = self._load_and_resize_image(image_path)
             
-            # 處理每個偵測到的物件
             saved_files = []
             for i, obj in enumerate(detected_objects):
                 logger.debug(f"正在處理物件 {i+1}/{len(detected_objects)}：{obj.label}")
                 
-                # 繪製邊界框
                 annotated = self._draw_bounding_box(image, obj)
                 
                 if annotated is None:
                     continue
                 
-                # 儲存標註後的圖像
                 output_filename = f"{obj.label.replace(' ', '_')}_{i}_detected.png"
                 output_file = output_path / output_filename
                 annotated.save(str(output_file))
