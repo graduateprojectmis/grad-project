@@ -13,12 +13,16 @@ from app.config import get_settings
 from app.core.logger import setup_logger, get_logger
 from app.core.exceptions import AppException
 from app.services import DatabaseService, EmbeddingService, LLMService
+from app.services.annotating_service import ImageAnnotationService
 from app.models import (
     QuestionRequest,
     QuestionResponse,
     SearchRequest,
     SearchResponse,
-    HealthResponse
+    HealthResponse,
+    ImageAnnotationRequest,
+    ImageAnnotationResponse,
+    DetectedObjectResponse
 )
 from app import __version__
 
@@ -37,6 +41,7 @@ logger = get_logger(__name__)
 db_service: DatabaseService = None
 embedding_service: EmbeddingService = None
 llm_service: LLMService = None
+annotation_service: ImageAnnotationService = None
 
 
 @asynccontextmanager
@@ -362,6 +367,138 @@ async def clear_api_key():
     logger.info("API Key 已清除")
     
     return {"status": "success", "message": "API Key 已清除"}
+
+
+# ========== 圖片上傳與標註 API ==========
+
+from fastapi import UploadFile, File, Form
+import shutil
+
+
+@app.post("/api/upload")
+async def upload_image_file(file: UploadFile = File(...)):
+    """
+    上傳圖片檔案（不進行標註）
+    """
+    try:
+        # 檢查檔案類型
+        allowed_types = ["image/jpeg", "image/jpg", "image/png", "image/gif", "image/webp"]
+        if file.content_type not in allowed_types:
+            raise HTTPException(
+                status_code=400,
+                detail="不支援的檔案類型，僅支援 JPG、PNG、GIF、WEBP"
+            )
+        
+        # 建立上傳目錄
+        upload_dir = settings.upload_dir
+        upload_dir.mkdir(parents=True, exist_ok=True)
+        
+        # 儲存檔案
+        file_path = upload_dir / file.filename
+        with file_path.open("wb") as buffer:
+            shutil.copyfileobj(file.file, buffer)
+        
+        file_size = file_path.stat().st_size
+        
+        logger.info(f"檔案已上傳：{file.filename}，大小：{file_size} bytes")
+        
+        return {
+            "status": "success",
+            "message": "圖片上傳成功",
+            "filename": file.filename,
+            "file_path": str(file_path),
+            "file_size": file_size
+        }
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"上傳圖片時發生錯誤：{e}", exc_info=True)
+        raise HTTPException(
+            status_code=500,
+            detail=f"上傳圖片時發生錯誤：{str(e)}"
+        )
+
+
+@app.post("/api/annotate-image", response_model=ImageAnnotationResponse)
+async def annotate_image(
+    file: UploadFile = File(...),
+    target_item: str = Form(default="objects")
+):
+    """
+    上傳並標註圖片
+    """
+    try:
+        # 檢查 Google API Key
+        if not settings.google_api_key:
+            raise HTTPException(
+                status_code=400,
+                detail="Google API Key 未設定，請先在 .env 檔案中設定 GOOGLE_API_KEY"
+            )
+        
+        # 檢查檔案類型
+        allowed_types = ["image/jpeg", "image/jpg", "image/png", "image/gif", "image/webp"]
+        if file.content_type not in allowed_types:
+            raise HTTPException(
+                status_code=400,
+                detail="不支援的檔案類型，僅支援 JPG、PNG、GIF、WEBP"
+            )
+        
+        # 建立上傳目錄
+        upload_dir = settings.upload_dir
+        upload_dir.mkdir(parents=True, exist_ok=True)
+        
+        # 儲存上傳的檔案
+        file_path = upload_dir / file.filename
+        with file_path.open("wb") as buffer:
+            shutil.copyfileobj(file.file, buffer)
+        
+        logger.info(f"圖片已上傳：{file.filename}")
+        
+        # 初始化標註服務
+        global annotation_service
+        if not annotation_service:
+            annotation_service = ImageAnnotationService()
+        
+        # 執行物件偵測
+        detected_objects = annotation_service.detect_objects(
+            image_path=str(file_path),
+            target_item=target_item
+        )
+        
+        # 儲存標註圖片
+        annotated_files = annotation_service.annotate_image(
+            image_path=str(file_path),
+            target_item=target_item
+        )
+        
+        # 轉換為回應格式
+        objects_response = [
+            DetectedObjectResponse(
+                box_2d=obj.box_2d,
+                label=obj.label
+            )
+            for obj in detected_objects
+        ]
+        
+        logger.info(f"圖片標註完成，偵測到 {len(detected_objects)} 個物件")
+        
+        return ImageAnnotationResponse(
+            status="success",
+            message=f"成功偵測並標註 {len(detected_objects)} 個物件",
+            total_detected=len(detected_objects),
+            objects=objects_response,
+            annotated_images=annotated_files
+        )
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"標註圖片時發生錯誤：{e}", exc_info=True)
+        raise HTTPException(
+            status_code=500,
+            detail=f"標註圖片時發生錯誤：{str(e)}"
+        )
 
 
 if __name__ == "__main__":

@@ -71,4 +71,18 @@ export const uploadImage = async (file) => {
   return response.data
 }
 
+// 標註圖片
+export const annotateImage = async (file, targetItem = 'objects') => {
+  const formData = new FormData()
+  formData.append('file', file)
+  formData.append('target_item', targetItem)
+  
+  const response = await api.post('/api/annotate-image', formData, {
+    headers: {
+      'Content-Type': 'multipart/form-data',
+    },
+  })
+  return response.data
+}
+
 export default api

@@ -8,7 +8,10 @@ from .schemas import (
     EmbeddingRequest,
     EmbeddingResponse,
     DocumentChunk,
-    DocumentWithEmbedding
+    DocumentWithEmbedding,
+    ImageAnnotationRequest,
+    ImageAnnotationResponse,
+    DetectedObjectResponse,
 )
 
 __all__ = [
@@ -20,5 +23,8 @@ __all__ = [
     "EmbeddingRequest",
     "EmbeddingResponse",
     "DocumentChunk",
-    "DocumentWithEmbedding"
+    "DocumentWithEmbedding",
+    "ImageAnnotationRequest",
+    "ImageAnnotationResponse",
+    "DetectedObjectResponse",
 ]

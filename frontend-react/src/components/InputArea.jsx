@@ -1,6 +1,6 @@
 import { useState, useRef } from 'react'
-import { Send, Paperclip, X } from 'lucide-react'
-import { askQuestion, uploadImage } from '../services/api'
+import { Send, Paperclip, X, Tag } from 'lucide-react'
+import { askQuestion, uploadImage, annotateImage } from '../services/api'
 import './InputArea.css'
 
 function InputArea({ 
@@ -16,6 +16,8 @@ function InputArea({
   const [isLoading, setIsLoading] = useState(false)
   const [selectedImage, setSelectedImage] = useState(null)
   const [imagePreview, setImagePreview] = useState(null)
+  const [enableAnnotation, setEnableAnnotation] = useState(false)
+  const [targetItem, setTargetItem] = useState('objects')
   const fileInputRef = useRef(null)
 
   const handleSubmit = async (e) => {
@@ -38,17 +40,38 @@ function InputArea({
     try {
       setIsLoading(true)
 
-      // 如果有圖片，先上傳
+      // 如果有圖片，根據開關決定是否進行標註
       if (selectedImage) {
-        onSendMessage(`📤 正在上傳圖片：${selectedImage.name}...`)
-        
-        const uploadData = await uploadImage(selectedImage)
-        onReceiveMessage(
-          `✅ ${uploadData.message}<br>` +
-          `檔案名稱：${uploadData.filename}<br>` +
-          `檔案大小：${formatFileSize(uploadData.file_size)}<br>` +
-          `儲存路徑：${uploadData.file_path}`
-        )
+        if (enableAnnotation) {
+          // 進行圖片標註
+          onSendMessage(`� 正在標註圖片：${selectedImage.name}（偵測目標：${targetItem}）...`)
+          
+          const annotationData = await annotateImage(selectedImage, targetItem)
+          
+          let resultMessage = `✅ ${annotationData.message}<br>`
+          resultMessage += `偵測到的物件：<br>`
+          
+          annotationData.objects.forEach((obj, idx) => {
+            resultMessage += `${idx + 1}. ${obj.label} (座標: [${obj.box_2d.join(', ')}])<br>`
+          })
+          
+          if (annotationData.annotated_images && annotationData.annotated_images.length > 0) {
+            resultMessage += `<br>已儲存 ${annotationData.annotated_images.length} 個標註圖片`
+          }
+          
+          onReceiveMessage(resultMessage)
+        } else {
+          // 單純上傳圖片
+          onSendMessage(`�📤 正在上傳圖片：${selectedImage.name}...`)
+          
+          const uploadData = await uploadImage(selectedImage)
+          onReceiveMessage(
+            `✅ ${uploadData.message}<br>` +
+            `檔案名稱：${uploadData.filename}<br>` +
+            `檔案大小：${formatFileSize(uploadData.file_size)}<br>` +
+            `儲存路徑：${uploadData.file_path}`
+          )
+        }
         
         clearImage()
         return
@@ -152,6 +175,35 @@ function InputArea({
             >
               <X size={16} />
             </button>
+          </div>
+          
+          {/* 圖片標記開關 */}
+          <div className="annotation-controls">
+            <div className="annotation-toggle">
+              <input
+                type="checkbox"
+                id="enable-annotation"
+                checked={enableAnnotation}
+                onChange={(e) => setEnableAnnotation(e.target.checked)}
+              />
+              <label htmlFor="enable-annotation">
+                <Tag size={16} />
+                啟用圖片標記
+              </label>
+            </div>
+            
+            {enableAnnotation && (
+              <div className="target-item-input">
+                <label htmlFor="target-item">偵測目標：</label>
+                <input
+                  type="text"
+                  id="target-item"
+                  value={targetItem}
+                  onChange={(e) => setTargetItem(e.target.value)}
+                  placeholder="例如：person, car, objects"
+                />
+              </div>
+            )}
           </div>
         </div>
       )}

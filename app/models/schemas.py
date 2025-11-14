@@ -83,3 +83,29 @@ class APIKeyStatusResponse(BaseModel):
 class SetAPIKeyRequest(BaseModel):
     """設定 API Key 請求"""
     api_key: str = Field(..., min_length=1, description="API Key")
+
+
+class ImageAnnotationRequest(BaseModel):
+    """圖片標註請求"""
+    target_item: str = Field(default="objects", description="目標物件描述")
+    
+    model_config = {"json_schema_extra": {
+        "examples": [{
+            "target_item": "person"
+        }]
+    }}
+
+
+class DetectedObjectResponse(BaseModel):
+    """偵測到的物件回應"""
+    box_2d: List[int] = Field(..., description="2D 邊界框座標 [y_min, x_min, y_max, x_max]")
+    label: str = Field(..., description="物件標籤")
+
+
+class ImageAnnotationResponse(BaseModel):
+    """圖片標註回應"""
+    status: str = Field(default="success", description="狀態")
+    message: str = Field(..., description="訊息")
+    total_detected: int = Field(..., description="偵測到的物件總數")
+    objects: List[DetectedObjectResponse] = Field(..., description="偵測到的物件列表")
+    annotated_images: List[str] = Field(default_factory=list, description="標註圖片檔案路徑")
