@@ -248,7 +248,7 @@ class ImageAnnotationService:
             # 設定輸出目錄
             if output_dir is None:
                 settings = get_settings()
-                output_dir = str(settings.project_root / "segmentation_outputs")
+                output_dir = str(settings.output_dir / "Annotated_Image")
             
             output_path = Path(output_dir)
             output_path.mkdir(parents=True, exist_ok=True)
