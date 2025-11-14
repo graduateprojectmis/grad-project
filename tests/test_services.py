@@ -219,3 +219,136 @@ class TestLLMServiceMock:
         
         # 驗證結果
         assert summary == "這是摘要"
+
+
+class TestImageAnnotationService:
+    """測試圖像標註服務"""
+    
+    def test_detected_object_creation(self):
+        """測試 DetectedObject 建立"""
+        from app.services.annotating_service import DetectedObject
+        
+        box_2d = [100, 200, 300, 400]
+        label = "test_button"
+        
+        obj = DetectedObject(box_2d=box_2d, label=label)
+        
+        assert obj.box_2d == box_2d
+        assert obj.label == label
+        assert obj.to_dict() == {"box_2d": box_2d, "label": label}
+    
+    @patch('app.services.annotating_service.genai.Client')
+    def test_initialization(self, mock_client):
+        """測試服務初始化"""
+        from app.services.annotating_service import ImageAnnotationService
+        
+        service = ImageAnnotationService(api_key="test-key")
+        
+        assert service.api_key == "test-key"
+        assert service.model == "gemini-2.0-flash-exp"
+        assert service.max_image_size == (1024, 1024)
+        mock_client.assert_called_once_with(api_key="test-key")
+    
+    def test_parse_json_response(self):
+        """測試 JSON 回應解析"""
+        from app.services.annotating_service import ImageAnnotationService
+        
+        service = ImageAnnotationService(api_key="test-key")
+        
+        # 測試帶有 markdown 標記的回應
+        json_with_markdown = """```json
+[{"box_2d": [100, 200, 300, 400], "label": "button"}]
+```"""
+        result = service._parse_json_response(json_with_markdown)
+        assert "```" not in result
+        assert "[{" in result
+        
+        # 測試純 JSON 回應
+        pure_json = '[{"box_2d": [100, 200, 300, 400], "label": "button"}]'
+        result = service._parse_json_response(pure_json)
+        assert result == pure_json
+    
+    @patch('app.services.annotating_service.Image.open')
+    def test_load_and_resize_image(self, mock_open):
+        """測試載入和調整圖像大小"""
+        from app.services.annotating_service import ImageAnnotationService
+        from PIL import Image
+        
+        # 建立 mock 圖像
+        mock_image = Mock(spec=Image.Image)
+        mock_image.size = (2048, 2048)
+        mock_open.return_value = mock_image
+        
+        service = ImageAnnotationService(api_key="test-key")
+        result = service._load_and_resize_image("test.png")
+        
+        # 驗證
+        mock_open.assert_called_once_with("test.png")
+        mock_image.thumbnail.assert_called_once()
+    
+    @patch('app.services.annotating_service.genai.Client')
+    @patch('app.services.annotating_service.Image.open')
+    def test_detect_objects(self, mock_open, mock_client_class):
+        """測試物件偵測"""
+        from app.services.annotating_service import ImageAnnotationService
+        from PIL import Image
+        
+        # 建立 mock 圖像
+        mock_image = Mock(spec=Image.Image)
+        mock_image.size = (1024, 1024)
+        mock_open.return_value = mock_image
+        
+        # 建立 mock API 回應
+        mock_response = Mock()
+        mock_response.text = '''```json
+[
+    {"box_2d": [100, 200, 300, 400], "label": "play_button"},
+    {"box_2d": [500, 600, 700, 800], "label": "pause_button"}
+]
+```'''
+        
+        mock_client = Mock()
+        mock_client.models.generate_content.return_value = mock_response
+        mock_client_class.return_value = mock_client
+        
+        # 執行偵測
+        service = ImageAnnotationService(api_key="test-key")
+        detected_objects = service.detect_objects("test.png", "button")
+        
+        # 驗證結果
+        assert len(detected_objects) == 2
+        assert detected_objects[0].label == "play_button"
+        assert detected_objects[1].label == "pause_button"
+        assert detected_objects[0].box_2d == [100, 200, 300, 400]
+    
+    @patch('app.services.annotating_service.genai.Client')
+    @patch('app.services.annotating_service.Image.open')
+    def test_get_detection_summary(self, mock_open, mock_client_class):
+        """測試獲取偵測摘要"""
+        from app.services.annotating_service import ImageAnnotationService
+        from PIL import Image
+        
+        # 建立 mock 圖像
+        mock_image = Mock(spec=Image.Image)
+        mock_image.size = (1024, 1024)
+        mock_open.return_value = mock_image
+        
+        # 建立 mock API 回應
+        mock_response = Mock()
+        mock_response.text = '[{"box_2d": [100, 200, 300, 400], "label": "test_button"}]'
+        
+        mock_client = Mock()
+        mock_client.models.generate_content.return_value = mock_response
+        mock_client_class.return_value = mock_client
+        
+        # 執行
+        service = ImageAnnotationService(api_key="test-key")
+        summary = service.get_detection_summary("test.png", "button")
+        
+        # 驗證
+        assert summary["image_path"] == "test.png"
+        assert summary["target_item"] == "button"
+        assert summary["total_detected"] == 1
+        assert len(summary["objects"]) == 1
+        assert summary["objects"][0]["label"] == "test_button"
+

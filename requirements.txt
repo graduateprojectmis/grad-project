@@ -21,6 +21,10 @@ openai==0.28.0
 
 # Google Generative AI (Gemini)
 google-generativeai==0.8.5
+google-genai==0.3.0
+
+# PIL/Pillow for image processing
+Pillow==11.1.0
 
 # 文字處理
 langchain-text-splitters==0.3.11
