@@ -466,6 +466,17 @@ async def annotate_image(
             target_item=target_item
         )
         
+        # 檢查是否偵測到物件
+        if not detected_objects:
+            logger.warning(f"圖片中未偵測到指定的物件：{target_item}")
+            return ImageAnnotationResponse(
+                status="success",
+                message=f"圖片分析完成，但未在圖片中找到 '{target_item}' 相關的物件",
+                total_detected=0,
+                objects=[],
+                annotated_images=[]
+            )
+        
         # 儲存標註圖片
         annotated_files = annotation_service.annotate_image(
             image_path=str(file_path),

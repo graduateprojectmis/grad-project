@@ -76,13 +76,22 @@ class ImageAnnotationService:
         Returns:
             清理後的 JSON 字串
         """
+        # 移除前後的空白
+        json_output = json_output.strip()
+        
+        # 移除 markdown 代碼塊標記
         lines = json_output.splitlines()
         for i, line in enumerate(lines):
             if line.strip() == "```json":
                 json_output = "\n".join(lines[i+1:])
-                output = json_output.split("```")[0]
+                output = json_output.split("```")[0].strip()
                 return output
-        return json_output
+            elif line.strip() == "```":
+                json_output = "\n".join(lines[i+1:])
+                output = json_output.split("```")[0].strip()
+                return output
+        
+        return json_output.strip()
     
     def _load_and_resize_image(self, image_path: str) -> Image.Image:
         """
@@ -123,20 +132,25 @@ class ImageAnnotationService:
             
             image = self._load_and_resize_image(image_path)
             
-            prompt = f"""
-            Detect the {target_item} in this image.
-            Output a JSON list where each entry contains:
-            - "box_2d": 2D bounding box coordinates [y_min, x_min, y_max, x_max] in range 0-1000
-            - "label": descriptive text label
-            
-            Format:
-            [{{"box_2d": [y_min, x_min, y_max, x_max], "label": "description"}}]
-            
-            Do NOT include any "mask" field. Only output the JSON array.
-            """
+            prompt = f"""Please analyze this image and detect all instances of {target_item}.
+
+                For each detected object, provide:
+                1. A bounding box in the format: [y_min, x_min, y_max, x_max] with values from 0 to 1000 (normalized coordinates)
+                2. A descriptive label for the object
+
+                IMPORTANT: You MUST respond with ONLY a valid JSON array, nothing else. No markdown, no explanations, just pure JSON.
+
+                Example format:
+                [{{"box_2d": [100, 150, 300, 400], "label": "dog in center"}}, {{"box_2d": [50, 50, 200, 200], "label": "cat on left"}}]
+
+                If no {target_item} is found in the image, return an empty array: []
+
+                Now analyze the image and provide the JSON response:
+                """
             
             config = types.GenerateContentConfig(
-                thinking_config=types.ThinkingConfig(thinking_budget=0)
+                thinking_config=types.ThinkingConfig(thinking_budget=0),
+                temperature=0.1  # Lower temperature for more deterministic responses
             )
             
             logger.debug("正在呼叫 Gemini API 進行物件偵測")
@@ -146,8 +160,48 @@ class ImageAnnotationService:
                 config=config
             )
             
-            parsed_json = self._parse_json_response(response.text)
-            items = json.loads(parsed_json)
+            logger.debug(f"API 回應類型：{type(response)}")
+            logger.debug(f"API 回應內容：{response}")
+            
+            # 嘗試獲取回應文本
+            if hasattr(response, 'text') and response.text:
+                response_text = response.text
+            elif hasattr(response, 'candidates') and response.candidates:
+                # 從候選對象中提取文本
+                response_text = response.candidates[0].content.parts[0].text if response.candidates[0].content.parts else ""
+            else:
+                raise ValidationError("Gemini API 沒有返回有效的回應文本")
+            
+            logger.debug(f"提取的回應文本：{response_text[:200] if response_text else '空'}")
+            
+            parsed_json = self._parse_json_response(response_text)
+            
+            if not parsed_json or not parsed_json.strip():
+                logger.warning(f"API 回應為空，返回空的偵測結果")
+                return []
+            
+            # 嘗試解析 JSON，如果失敗則嘗試提取 JSON 數組
+            try:
+                items = json.loads(parsed_json)
+            except json.JSONDecodeError:
+                # 嘗試從回應中提取 JSON 數組
+                logger.debug("直接 JSON 解析失敗，嘗試提取 JSON 數組...")
+                import re
+                json_match = re.search(r'\[.*\]', parsed_json, re.DOTALL)
+                if json_match:
+                    try:
+                        items = json.loads(json_match.group())
+                    except json.JSONDecodeError as e:
+                        logger.error(f"無法從回應中提取有效的 JSON：{parsed_json[:300]}")
+                        raise ValidationError(f"API 回應不是有效的 JSON 格式。回應內容：{parsed_json[:200]}")
+                else:
+                    logger.error(f"未找到 JSON 數組，回應內容：{parsed_json[:300]}")
+                    raise ValidationError(f"API 回應中未找到 JSON 數組。回應內容：{parsed_json[:200]}")
+            
+            # 如果 items 不是列表，嘗試將其轉換為列表
+            if not isinstance(items, list):
+                logger.warning(f"API 回應不是列表，嘗試轉換...")
+                items = [items] if items else []
             
             detected_objects = [
                 DetectedObject(
@@ -155,6 +209,7 @@ class ImageAnnotationService:
                     label=item["label"]
                 )
                 for item in items
+                if isinstance(item, dict) and "box_2d" in item and "label" in item
             ]
             
             logger.info(f"成功偵測到 {len(detected_objects)} 個物件")
@@ -162,8 +217,10 @@ class ImageAnnotationService:
             
         except json.JSONDecodeError as e:
             logger.error(f"JSON 解析錯誤：{e}")
-            logger.error(f"回應內容：{parsed_json[:200] if 'parsed_json' in locals() else 'N/A'}")
-            raise ValidationError(f"API 回應格式錯誤：{str(e)}")
+            logger.error(f"回應內容：{parsed_json[:500] if 'parsed_json' in locals() else 'N/A'}")
+            raise ValidationError(f"API 回應格式錯誤：{str(e)}。回應內容：{parsed_json[:200] if 'parsed_json' in locals() else 'N/A'}")
+        except ValidationError:
+            raise
         except Exception as e:
             logger.error(f"物件偵測失敗：{e}")
             raise

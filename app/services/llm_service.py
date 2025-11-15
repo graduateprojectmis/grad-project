@@ -3,7 +3,8 @@ LLM 服務
 使用大型語言模型生成回答
 """
 from typing import Optional, List
-import openai
+from openai import OpenAI
+
 
 from app.core.logger import get_logger
 from app.core.exceptions import APIKeyError
@@ -14,7 +15,7 @@ logger = get_logger(__name__)
 
 class LLMService:
     """大型語言模型服務"""
-    
+
     def __init__(self, api_key: str = None, model: str = None):
         """
         初始化 LLM 服務
@@ -27,13 +28,14 @@ class LLMService:
         self.api_key = api_key or settings.openai_api_key
         self.model = model or settings.openai_model
         self.temperature = settings.openai_temperature
-        
+
         if not self.api_key:
             raise APIKeyError("OpenAI API Key 未設定")
         
-        openai.api_key = self.api_key
+        self.client = OpenAI(api_key=self.api_key)
+
         logger.info(f"LLM 服務已初始化，使用模型：{self.model}")
-    
+
     def generate_answer(
         self,
         question: str,
@@ -53,27 +55,25 @@ class LLMService:
         """
         try:
             temp = temperature if temperature is not None else self.temperature
-            
+
             prompt = self._build_prompt(question, context)
-            
+
             logger.debug(f"正在生成答案，問題：{question}")
-            
-            response = openai.ChatCompletion.create(
-                model=self.model,
-                messages=[{"role": "user", "content": prompt}],
-                temperature=temp,
-            )
-            
+
+            response = self.client.chat.completions.create(model=self.model,
+            messages=[{"role": "user", "content": prompt}],
+            temperature=temp)
+
             answer = response.choices[0].message.content.strip()
-            
+
             logger.debug(f"答案生成完成，長度：{len(answer)} 字元")
-            
+
             return answer
-            
+
         except Exception as e:
             logger.error(f"生成答案時發生錯誤：{e}")
             raise Exception(f"生成答案失敗：{str(e)}")
-    
+
     def _build_prompt(self, question: str, context: str) -> str:
         """
         建立提示詞
@@ -95,7 +95,7 @@ class LLMService:
 {question}
 
 請以清楚、自然且簡短的中文回答："""
-    
+
     def generate_summary(
         self,
         text: str,
@@ -113,21 +113,19 @@ class LLMService:
         """
         try:
             prompt = f"請將以下內容摘要為不超過 {max_length} 字的中文：\n\n{text}"
-            
+
             logger.debug("正在生成摘要")
-            
-            response = openai.ChatCompletion.create(
-                model=self.model,
-                messages=[{"role": "user", "content": prompt}],
-                temperature=0.3,
-            )
-            
+
+            response = client.chat.completions.create(model=self.model,
+            messages=[{"role": "user", "content": prompt}],
+            temperature=0.3)
+
             summary = response.choices[0].message.content.strip()
-            
+
             logger.debug("摘要生成完成")
-            
+
             return summary
-            
+
         except Exception as e:
             logger.error(f"生成摘要時發生錯誤：{e}")
             raise Exception(f"生成摘要失敗：{str(e)}")
