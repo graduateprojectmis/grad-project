@@ -116,7 +116,7 @@ class LLMService:
 
             logger.debug("正在生成摘要")
 
-            response = client.chat.completions.create(model=self.model,
+            response = self.client.chat.completions.create(model=self.model,
             messages=[{"role": "user", "content": prompt}],
             temperature=0.3)
 
