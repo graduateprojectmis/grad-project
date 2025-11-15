@@ -1,0 +1,125 @@
+<mxfile host="65bd71144e">
+    <diagram id="MFvOhZXlrBNw5Z0zpmzC" name="Page-1">
+        <mxGraphModel dx="964" dy="836" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+            <root>
+                <mxCell id="0"/>
+                <mxCell id="1" parent="0"/>
+                <mxCell id="56" value="" style="group" vertex="1" connectable="0" parent="1">
+                    <mxGeometry x="89.5" y="30" width="650.5" height="1020" as="geometry"/>
+                </mxCell>
+                <mxCell id="21" value="" style="group" parent="56" vertex="1" connectable="0">
+                    <mxGeometry x="70.91352080123269" width="507.1694915254239" height="118.26086956521738" as="geometry"/>
+                </mxCell>
+                <mxCell id="2" value="" style="rounded=0;whiteSpace=wrap;html=1;" parent="21" vertex="1">
+                    <mxGeometry width="507.1694915254239" height="118.26086956521738" as="geometry"/>
+                </mxCell>
+                <mxCell id="3" value="&lt;span style=&quot;color: rgb(63, 63, 63); font-size: 14px;&quot;&gt;Web UI&lt;/span&gt;&lt;br style=&quot;color: rgb(63, 63, 63); scrollbar-color: rgb(226, 226, 226) rgb(251, 251, 251); font-size: 14px;&quot;&gt;&lt;span style=&quot;color: rgb(63, 63, 63); font-size: 14px;&quot;&gt;(React or Vue)&lt;/span&gt;" style="rounded=0;whiteSpace=wrap;html=1;" parent="21" vertex="1">
+                    <mxGeometry x="32.60375302663437" y="39.420289855072454" width="130.41501210653755" height="52.56038647342994" as="geometry"/>
+                </mxCell>
+                <mxCell id="4" value="&lt;span style=&quot;color: rgb(63, 63, 63); font-size: 14px;&quot;&gt;Mobile App&lt;/span&gt;&lt;br style=&quot;color: rgb(63, 63, 63); scrollbar-color: rgb(226, 226, 226) rgb(251, 251, 251); font-size: 14px;&quot;&gt;&lt;span style=&quot;color: rgb(63, 63, 63); font-size: 14px;&quot;&gt;(iOS / Android)&lt;/span&gt;" style="rounded=0;whiteSpace=wrap;html=1;" parent="21" vertex="1">
+                    <mxGeometry x="188.37723970944316" y="39.420289855072454" width="130.41501210653755" height="52.56038647342994" as="geometry"/>
+                </mxCell>
+                <mxCell id="5" value="&lt;span style=&quot;color: rgb(63, 63, 63); font-size: 14px;&quot;&gt;CLI Tool&lt;/span&gt;" style="rounded=0;whiteSpace=wrap;html=1;" parent="21" vertex="1">
+                    <mxGeometry x="344.1507263922519" y="39.420289855072454" width="130.41501210653755" height="52.56038647342994" as="geometry"/>
+                </mxCell>
+                <mxCell id="6" value="&lt;font style=&quot;font-size: 24px;&quot;&gt;Frontend&lt;/font&gt;" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" parent="21" vertex="1">
+                    <mxGeometry x="231.8489104116223" y="8.76006441223832" width="43.47167070217918" height="13.140096618357486" as="geometry"/>
+                </mxCell>
+                <mxCell id="35" value="" style="group" parent="56" vertex="1" connectable="0">
+                    <mxGeometry y="177.39130434782606" width="650.5000000000002" height="177.39130434782606" as="geometry"/>
+                </mxCell>
+                <mxCell id="53" style="edgeStyle=none;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;" parent="35" source="12" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="324.86449567381766" y="243.91304347826085" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="12" value="" style="rounded=0;whiteSpace=wrap;html=1;" parent="35" vertex="1">
+                    <mxGeometry width="650.5000000000002" height="177.39130434782606" as="geometry"/>
+                </mxCell>
+                <mxCell id="23" value="" style="group" parent="35" vertex="1" connectable="0">
+                    <mxGeometry x="22.341517719568564" y="36.95652173913043" width="605.8269876733436" height="121.95652173913042" as="geometry"/>
+                </mxCell>
+                <mxCell id="20" value="" style="rounded=0;whiteSpace=wrap;html=1;" parent="23" vertex="1">
+                    <mxGeometry width="605.8269876733436" height="121.95652173913042" as="geometry"/>
+                </mxCell>
+                <mxCell id="22" value="&lt;font style=&quot;font-size: 14px;&quot;&gt;main.py&lt;/font&gt;" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" parent="23" vertex="1">
+                    <mxGeometry x="28.77635593220338" y="3.2817391304347803" width="60.13867488443761" height="22.173913043478258" as="geometry"/>
+                </mxCell>
+                <mxCell id="13" value="&lt;span style=&quot;font-size: 14px;&quot;&gt;/api/ask&lt;/span&gt;" style="rounded=0;whiteSpace=wrap;html=1;" parent="35" vertex="1">
+                    <mxGeometry x="89.64528615452346" y="71.653768115942" width="130.41501210653755" height="52.56038647342994" as="geometry"/>
+                </mxCell>
+                <mxCell id="14" value="&lt;span style=&quot;font-size: 14px;&quot;&gt;/api/search&lt;/span&gt;" style="rounded=0;whiteSpace=wrap;html=1;" parent="35" vertex="1">
+                    <mxGeometry x="260.03963020030824" y="71.653768115942" width="130.41501210653755" height="52.56038647342994" as="geometry"/>
+                </mxCell>
+                <mxCell id="15" value="&lt;span style=&quot;color: rgb(63, 63, 63); font-size: 14px;&quot;&gt;/api/health&lt;/span&gt;" style="rounded=0;whiteSpace=wrap;html=1;" parent="35" vertex="1">
+                    <mxGeometry x="430.42967862645844" y="71.653768115942" width="130.41501210653755" height="52.56038647342994" as="geometry"/>
+                </mxCell>
+                <mxCell id="16" value="&lt;span style=&quot;font-size: 24px;&quot;&gt;API (FastAPI)&lt;/span&gt;" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" parent="35" vertex="1">
+                    <mxGeometry x="240.46449152542382" y="14.782608695652172" width="168.07757318952238" height="13.141739130434782" as="geometry"/>
+                </mxCell>
+                <mxCell id="36" value="" style="group" parent="56" vertex="1" connectable="0">
+                    <mxGeometry x="3.5080893682588603" y="421.3043478260869" width="641.9803543913714" height="162.60869565217388" as="geometry"/>
+                </mxCell>
+                <mxCell id="54" style="edgeStyle=none;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;" parent="36" source="25" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="321.35640630555883" y="221.73913043478262" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="25" value="" style="rounded=0;whiteSpace=wrap;html=1;" parent="36" vertex="1">
+                    <mxGeometry width="641.9803543913714" height="162.60869565217388" as="geometry"/>
+                </mxCell>
+                <mxCell id="29" value="&lt;span style=&quot;font-size: 14px;&quot;&gt;EmbeddingService&lt;/span&gt;&lt;div&gt;&lt;ul&gt;&lt;li style=&quot;text-align: left;&quot;&gt;&lt;span style=&quot;font-size: 14px;&quot;&gt;OpenAI&lt;/span&gt;&lt;/li&gt;&lt;li style=&quot;text-align: left;&quot;&gt;&lt;span style=&quot;font-size: 14px;&quot;&gt;Gemini&lt;/span&gt;&lt;/li&gt;&lt;li style=&quot;text-align: left;&quot;&gt;&lt;span style=&quot;font-size: 14px;&quot;&gt;Batch Process&lt;/span&gt;&lt;/li&gt;&lt;/ul&gt;&lt;/div&gt;" style="rounded=0;whiteSpace=wrap;html=1;align=center;" parent="36" vertex="1">
+                    <mxGeometry x="39.591294298921426" y="36.95652173913043" width="160.3697996918336" height="110.86956521739131" as="geometry"/>
+                </mxCell>
+                <mxCell id="32" value="&lt;span style=&quot;font-size: 24px;&quot;&gt;Services&lt;/span&gt;" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" parent="36" vertex="1">
+                    <mxGeometry x="303.5141646489105" y="14.783977455716565" width="43.47167070217918" height="13.140096618357486" as="geometry"/>
+                </mxCell>
+                <mxCell id="33" value="&lt;font style=&quot;font-size: 14px;&quot;&gt;DatabaseService&lt;/font&gt;&lt;div&gt;&lt;ul&gt;&lt;li style=&quot;text-align: left;&quot;&gt;&lt;font style=&quot;font-size: 14px;&quot;&gt;Insert&lt;/font&gt;&lt;/li&gt;&lt;li style=&quot;text-align: left;&quot;&gt;&lt;font style=&quot;font-size: 14px;&quot;&gt;Query&lt;/font&gt;&lt;/li&gt;&lt;li style=&quot;text-align: left;&quot;&gt;&lt;font style=&quot;font-size: 14px;&quot;&gt;Count&lt;/font&gt;&lt;/li&gt;&lt;/ul&gt;&lt;/div&gt;" style="rounded=0;whiteSpace=wrap;html=1;" parent="36" vertex="1">
+                    <mxGeometry x="245.06510015408324" y="36.95652173913043" width="160.3697996918336" height="110.86956521739131" as="geometry"/>
+                </mxCell>
+                <mxCell id="34" value="&lt;span style=&quot;font-size: 14px;&quot;&gt;LLMService&lt;/span&gt;&lt;div style=&quot;text-align: left;&quot;&gt;&lt;ul&gt;&lt;li&gt;&lt;span style=&quot;font-size: 14px;&quot;&gt;Generate Answer&lt;/span&gt;&lt;/li&gt;&lt;li&gt;&lt;span style=&quot;font-size: 14px;&quot;&gt;Summarize&lt;/span&gt;&lt;/li&gt;&lt;/ul&gt;&lt;/div&gt;" style="rounded=0;whiteSpace=wrap;html=1;" parent="36" vertex="1">
+                    <mxGeometry x="450.53890600924507" y="36.95652173913043" width="160.3697996918336" height="110.86956521739131" as="geometry"/>
+                </mxCell>
+                <mxCell id="48" value="" style="group" parent="56" vertex="1" connectable="0">
+                    <mxGeometry x="3.5080893682588603" y="643.0434782608695" width="641.9803543913714" height="162.60869565217388" as="geometry"/>
+                </mxCell>
+                <mxCell id="38" value="" style="rounded=0;whiteSpace=wrap;html=1;" parent="48" vertex="1">
+                    <mxGeometry width="641.9803543913714" height="162.60869565217388" as="geometry"/>
+                </mxCell>
+                <mxCell id="39" value="&lt;span style=&quot;font-size: 14px;&quot;&gt;ChromaDB&lt;/span&gt;&lt;div&gt;&lt;ul&gt;&lt;li style=&quot;text-align: left;&quot;&gt;&lt;span style=&quot;font-size: 14px;&quot;&gt;Embeddings&lt;/span&gt;&lt;/li&gt;&lt;li style=&quot;text-align: left;&quot;&gt;&lt;span style=&quot;font-size: 14px;&quot;&gt;Documents&lt;/span&gt;&lt;/li&gt;&lt;li style=&quot;text-align: left;&quot;&gt;&lt;span style=&quot;font-size: 14px;&quot;&gt;Metadata&lt;/span&gt;&lt;/li&gt;&lt;/ul&gt;&lt;/div&gt;" style="rounded=0;whiteSpace=wrap;html=1;align=center;" parent="48" vertex="1">
+                    <mxGeometry x="39.591294298921426" y="36.95652173913043" width="160.3697996918336" height="110.86956521739131" as="geometry"/>
+                </mxCell>
+                <mxCell id="40" value="&lt;span style=&quot;font-size: 24px;&quot;&gt;Data Layer&lt;/span&gt;" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" parent="48" vertex="1">
+                    <mxGeometry x="253.74511556240378" y="14.782608695652172" width="134.5001463790447" height="13.141739130434782" as="geometry"/>
+                </mxCell>
+                <mxCell id="41" value="&lt;font style=&quot;font-size: 14px;&quot;&gt;JSON Files&lt;/font&gt;&lt;div&gt;&lt;ul&gt;&lt;li style=&quot;text-align: left;&quot;&gt;&lt;span style=&quot;font-size: 14px;&quot;&gt;Config Data&lt;/span&gt;&lt;/li&gt;&lt;li style=&quot;text-align: left;&quot;&gt;&lt;span style=&quot;font-size: 14px;&quot;&gt;Raw Data&lt;/span&gt;&lt;/li&gt;&lt;/ul&gt;&lt;/div&gt;" style="rounded=0;whiteSpace=wrap;html=1;" parent="48" vertex="1">
+                    <mxGeometry x="245.06510015408324" y="36.95652173913043" width="160.3697996918336" height="110.86956521739131" as="geometry"/>
+                </mxCell>
+                <mxCell id="42" value="&lt;span style=&quot;font-size: 14px;&quot;&gt;Logs&lt;/span&gt;&lt;div style=&quot;text-align: left;&quot;&gt;&lt;ul&gt;&lt;li&gt;&lt;span style=&quot;font-size: 14px;&quot;&gt;app.log&lt;/span&gt;&lt;/li&gt;&lt;li&gt;&lt;span style=&quot;font-size: 14px;&quot;&gt;access.log&lt;/span&gt;&lt;/li&gt;&lt;/ul&gt;&lt;/div&gt;" style="rounded=0;whiteSpace=wrap;html=1;" parent="48" vertex="1">
+                    <mxGeometry x="450.53890600924507" y="36.95652173913043" width="160.3697996918336" height="110.86956521739131" as="geometry"/>
+                </mxCell>
+                <mxCell id="49" value="" style="group" parent="56" vertex="1" connectable="0">
+                    <mxGeometry x="94.71841294298923" y="857.3913043478259" width="461.0631741140217" height="162.60869565217388" as="geometry"/>
+                </mxCell>
+                <mxCell id="43" value="" style="rounded=0;whiteSpace=wrap;html=1;" parent="49" vertex="1">
+                    <mxGeometry width="461.0631741140217" height="162.60869565217388" as="geometry"/>
+                </mxCell>
+                <mxCell id="44" value="&lt;span style=&quot;font-size: 14px;&quot;&gt;OpenAI API&lt;/span&gt;&lt;div&gt;&lt;ul&gt;&lt;li style=&quot;text-align: left;&quot;&gt;&lt;span style=&quot;font-size: 14px;&quot;&gt;GPT Models&lt;/span&gt;&lt;/li&gt;&lt;li style=&quot;text-align: left;&quot;&gt;&lt;span style=&quot;font-size: 14px;&quot;&gt;Embeddings&lt;/span&gt;&lt;/li&gt;&lt;/ul&gt;&lt;/div&gt;" style="rounded=0;whiteSpace=wrap;html=1;align=center;" parent="49" vertex="1">
+                    <mxGeometry x="55.3776964560863" y="44.347826086956516" width="160.3697996918336" height="110.86956521739131" as="geometry"/>
+                </mxCell>
+                <mxCell id="45" value="&lt;span style=&quot;font-size: 24px;&quot;&gt;External APIs&lt;/span&gt;" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" parent="49" vertex="1">
+                    <mxGeometry x="142.15780431432978" y="14.782608695652172" width="177.24872110939913" height="13.141739130434782" as="geometry"/>
+                </mxCell>
+                <mxCell id="46" value="&lt;font style=&quot;font-size: 14px;&quot;&gt;Google APIs&lt;/font&gt;&lt;div&gt;&lt;ul&gt;&lt;li style=&quot;text-align: left;&quot;&gt;&lt;span style=&quot;font-size: 14px;&quot;&gt;Gemini&lt;/span&gt;&lt;/li&gt;&lt;li style=&quot;text-align: left;&quot;&gt;&lt;span style=&quot;font-size: 14px;&quot;&gt;Embeddings&lt;/span&gt;&lt;/li&gt;&lt;/ul&gt;&lt;/div&gt;" style="rounded=0;whiteSpace=wrap;html=1;" parent="49" vertex="1">
+                    <mxGeometry x="245.8168335901387" y="44.347826086956516" width="160.3697996918336" height="110.86956521739131" as="geometry"/>
+                </mxCell>
+                <mxCell id="52" style="edgeStyle=none;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" parent="56" source="2" target="12" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="55" style="edgeStyle=none;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" parent="56" source="38" target="43" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+            </root>
+        </mxGraphModel>
+    </diagram>
+</mxfile>

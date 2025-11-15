@@ -1,185 +1,103 @@
-# AirPods Q&A 智慧問答系統
+# Grad-Project — 可擴展的影像標註與知識服務框架
 
-## 快速開始
+這個專案是一個模組化的框架，原始目標為影像標註與相關服務（包含向量索引、LLM 介接、標註流程），但設計上可容易擴展成多種不同性質的系統，例如：
 
-### 前置需求
+- 客服系統（Customer Service）
+- 企業知識庫系統（Enterprise Knowledge Base / KB）
+- 學習輔助系統（Educational / Tutoring Assistant）
 
-- **Python 3.8+**
-- **OpenAI API Key**
+重點：本框架把一般 AI 應用常見的構件拆成清晰模組（資料匯入、前處理、向量化/embedding、檢索、LLM 呼叫、標註/回傳介面），方便替換或升級任何一個部件以符合不同產品需求。
 
-### 安裝 Python（如果尚未安裝）
+## 快速導覽
 
-```bash
-# macOS - 使用 Homebrew
-brew install python3
+- 代碼入口：`run_api.py`, `main.py`, `run_tests.py`
+- 主要模組：`app/services/`（業務邏輯）、`app/models/`（資料 schema）、`app/api/`（HTTP 介面）、`app/utils/`（工具函式）
+- 文件與圖表：`docs/`（包含架構說明與 draw.io 檔案）
 
-# 驗證安裝
-python3 --version
-```
+## 架構概觀
 
-### 快速啟動
+下方為系統架構圖與資料流程圖（你已用 draw.io 繪製並匯出 PNG）。
 
-```bash
-# 1. 賦予執行權限（首次執行時）
-chmod +x start_all.sh stop_all.sh
+### 系統架構圖
+![System Architecture](docs/image/System%20Architecture.svg)
 
-# 2. 啟動系統
-./start_all.sh
-```
+（若想看或編輯原始 draw.io 檔案：`docs/drawio/System Architecture.drawio`）
 
-系統會自動完成以下步驟：
+### 資料流程圖 / 使用流程
+![Data Flow Chart](docs/image/Data%20Flow%20Chart.svg)
 
-- 檢查 Python 環境
-- 安裝依賴套件
-- 初始化 ChromaDB（如果需要）
-- 啟動後端服務（port 8000）
-- 啟動前端服務（port 8080）
-- 自動在瀏覽器開啟
+（原始 draw.io 檔案：`docs/drawio/Data Flow Chart.drawio`）
 
-### 設定 API Key
+## 設計要點（契約）
 
-1. 開啟 http://localhost:8080
-2. 點擊右上角設定按鈕
-3. 輸入您的 OpenAI API Key
-4. 點擊「儲存到伺服器」
+輸入/輸出與錯誤模式的簡短契約：
 
-> **安全性**：API Key 會加密儲存在後端伺服器的環境變數檔案（`.env`）中，僅限本機可管理，不會暴露在前端。
+- 輸入：上傳的文件或影像 (binary / file path)、結構化 metadata（JSON）
+- 輸出：已標註的結果（JSON）、向量索引條目、LLM 回覆（text / structured）
+- 錯誤模式：檔案格式錯誤、外部服務不可用（向量 DB / LLM）、模型回傳逾時
 
----
+成功條件：新的輸入能被成功匯入、產生 embedding、被檢索並由 LLM 給出合理回覆或標註。
 
-## 訪問介面
+## 可擴展的使用情境（範例）
 
-啟動成功後，系統會自動在瀏覽器開啟，或手動訪問：
+1. 客服系統：
+	- 資料來源：客服歷史紀錄、FAQ、SOP 文件
+	- 變動點：將影像處理模組替換為文本/對話匯入流程，保留 embedding 與檢索 + LLM 回覆模組。
 
-| 服務 | 網址 | 說明 |
-|------|------|------|
-| 前端介面 | http://localhost:8080 | 使用者問答介面 |
-| 後端 API | http://localhost:8000 | RESTful API 服務 |
-| API 文檔 | http://localhost:8000/api/docs | Swagger API 文檔 |
+2. 企業知識庫：
+	- 資料來源：文件庫（PDF/Office）、內部 Wiki
+	- 變動點：新增文件爬蟲 / 匯入器、設定權限層級、企業向量索引設計（多租戶或命名空間）。
 
----
+3. 學習輔助系統：
+	- 資料來源：教科書章節、練習題、學生歷史紀錄
+	- 變動點：加入教學策略模組（逐步提示、難度分級）、學生模型（tracking）與評量回饋。
 
-## 停止服務
+每一種應用主要差異在於「資料匯入管線」與「服務化策略（可解釋性、權限、回覆風格）」；其餘共用的核心模組（embedding、檢索、LLM 呼叫）可複用。
+
+## 快速開始（開發環境）
+
+1. 建議 Python 版本：3.10+。建立虛擬環境並安裝依賴：
 
 ```bash
-# 方法一：使用停止腳本
-./stop_all.sh
-
-# 方法二：在執行 start_all.sh 的終端按 Ctrl+C
+# macOS / zsh 範例
+python3 -m venv .venv
+source .venv/bin/activate
+pip install -r requirements.txt
 ```
 
----
-
-## 詳細安裝步驟
-
-### 1. 安裝依賴套件
+2. 啟動本地 API（範例）
 
 ```bash
-pip3 install -r requirements.txt
+python run_api.py
 ```
 
-### 2. 初始化資料庫（首次使用）
+3. 執行測試套件
 
 ```bash
-python3 init_chromadb.py
+python run_tests.py
 ```
 
-### 3. 啟動系統
+（專案中也包含 `start-new.sh`, `start-react.sh` 可協助啟動前端與整合測試）
 
-```bash
-./start_all.sh
-```
+## 專案結構（摘要）
 
-然後在網頁上設定 API Key（點擊右上角設定按鈕，輸入後點擊「儲存到伺服器」）。
+- `app/api/` — FastAPI / HTTP 介面（或其他 web entrypoints）
+- `app/services/` — 服務層（annotating_service、embedding_service、llm_service、database_service）
+- `app/models/` — Pydantic schemas 與模型
+- `app/utils/` — 檔案操作、文字處理等 helper
+- `docs/` — 設計文件與圖表（draw.io 原始檔與匯出圖）
 
----
+欲了解更詳細的系統說明，請參考 `docs/ARCHITECTURE.md`。
 
-## 專案結構
+## 如何擴展（實作要點）
 
-```
-grad-project-3/
-├── web/                      # Web 應用
-│   ├── backend/             # 後端 API
-│   │   ├── api.py          # FastAPI 服務
-│   │   └── chroma_db/      # ChromaDB 資料庫
-│   └── frontend/            # 前端介面
-│       ├── index.html      # 主頁面
-│       ├── css/            # 樣式表
-│       └── js/             # JavaScript 檔案
-├── tools/                   # 工具腳本
-│   ├── ChromaDB.py         # 資料庫管理
-│   ├── query_with_llm.py   # LLM 查詢工具
-│   └── ...                 # 其他工具
-├── output/                  # 輸出資料
-│   └── json/               # JSON 格式資料
-├── logs/                    # 系統日誌檔案
-├── start_all.sh            # 啟動腳本
-├── stop_all.sh             # 停止腳本
-├── init_chromadb.py        # 資料庫初始化
-└── requirements.txt        # Python 依賴套件
-```
+1. 定義新的匯入器（ingestor）：把外部資料（例如對話、PDF、影像）轉為框架可處理的中介格式。
+2. 加入或替換 embedding 後端（例如使用 OpenAI, Cohere, 或自建模型），並更新 `app/services/embedding_service.py`。
+3. 調整檢索層（向量 DB 設計）：若需要分層權限或命名空間，請在 `database_service` 中新增相應邏輯。
+4. 自訂 LLM 回覆策略：透過 `llm_service` 攔截 prompt 與回覆格式。
 
----
+## 測試與品質門檻
 
-## 維護操作
+- 測試入口：`tests/`（包含單元測試與整合測試範例）。
+- 建議：為每個新增的外部整合（新的 embedding provider、vector DB、LLM）新增一組測試用例。
 
-### 重新初始化資料庫
-
-如果需要清空並重建資料庫：
-
-```bash
-# 刪除現有資料庫
-rm -rf web/backend/chroma_db
-
-# 重新初始化
-python3 init_chromadb.py
-```
-
-### 更新依賴套件
-
-```bash
-pip3 install -r requirements.txt --upgrade
-```
-
----
-
-## 疑難排解
-
-### 問題：未設定 API Key
-
-**症狀**：查詢時出現錯誤提示
-
-**解決方法**：
-1. 開啟網頁 http://localhost:8080
-2. 點擊右上角設定按鈕
-3. 輸入您的 OpenAI API Key
-4. 點擊「儲存到伺服器」
-
-> **提示**：API Key 會安全儲存在後端的 `.env` 檔案中，僅限本機可管理。
-
-### 問題：ChromaDB 資料不存在
-
-**症狀**：查詢時提示資料庫未初始化
-
-**解決方法**：
-```bash
-python3 init_chromadb.py
-```
-
-### 問題：依賴套件錯誤
-
-**症狀**：啟動時出現 `ModuleNotFoundError`
-
-**解決方法**：
-```bash
-pip3 install -r requirements.txt
-```
-
-### 問題：權限錯誤
-
-**症狀**：無法執行 `.sh` 腳本
-
-**解決方法**：
-```bash
-chmod +x start_all.sh stop_all.sh
-```
