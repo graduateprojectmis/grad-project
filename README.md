@@ -77,7 +77,7 @@ python run_api.py
 python run_tests.py
 ```
 
-（專案中也包含 `start-new.sh`, `start-react.sh` 可協助啟動前端與整合測試）
+（專案中也包含 `start-new.sh`, `start-all.sh` 可協助啟動前端與整合測試）
 
 ## 專案結構（摘要）
 
