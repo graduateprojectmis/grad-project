@@ -13,7 +13,7 @@ from app.config import get_settings
 from app.core.logger import setup_logger, get_logger
 from app.services import DatabaseService, EmbeddingService
 from app.utils import split_text, save_json
-from src.tools.airpods_manual_fetch import scrape_airpods_manual
+from app.services.airpods_manual_fetcher import scrape_airpods_manual
 
 # 初始化設定和日誌
 settings = get_settings()
