@@ -133,18 +133,22 @@ class TestDatabaseService:
 class TestEmbeddingServiceMock:
     """測試嵌入服務（使用 Mock）"""
     
-    @patch('app.services.embedding_service.openai.Embedding.create')
-    def test_openai_embedding(self, mock_create):
+    @patch('app.services.embedding_service.OpenAI')
+    def test_openai_embedding(self, mock_openai_class):
         """測試 OpenAI 嵌入生成"""
         from app.services.embedding_service import OpenAIEmbeddingService
         
         # 設定 mock 回應
-        mock_create.return_value = {
-            "data": [
-                {"embedding": [0.1, 0.2, 0.3]},
-                {"embedding": [0.4, 0.5, 0.6]}
-            ]
-        }
+        mock_response = Mock()
+        mock_item1 = Mock()
+        mock_item1.embedding = [0.1, 0.2, 0.3]
+        mock_item2 = Mock()
+        mock_item2.embedding = [0.4, 0.5, 0.6]
+        mock_response.data = [mock_item1, mock_item2]
+        
+        mock_client = Mock()
+        mock_client.embeddings.create.return_value = mock_response
+        mock_openai_class.return_value = mock_client
         
         # 初始化服務
         service = OpenAIEmbeddingService(api_key="test-key")
@@ -174,8 +178,8 @@ class TestEmbeddingServiceMock:
 class TestLLMServiceMock:
     """測試 LLM 服務（使用 Mock）"""
     
-    @patch('app.services.llm_service.openai.ChatCompletion.create')
-    def test_generate_answer(self, mock_create):
+    @patch('app.services.llm_service.OpenAI')
+    def test_generate_answer(self, mock_openai_class):
         """測試生成答案"""
         from app.services.llm_service import LLMService
         
@@ -183,7 +187,10 @@ class TestLLMServiceMock:
         mock_response = Mock()
         mock_response.choices = [Mock()]
         mock_response.choices[0].message.content = "這是測試答案"
-        mock_create.return_value = mock_response
+        
+        mock_client = Mock()
+        mock_client.chat.completions.create.return_value = mock_response
+        mock_openai_class.return_value = mock_client
         
         # 初始化服務
         service = LLMService(api_key="test-key")
@@ -198,10 +205,10 @@ class TestLLMServiceMock:
         assert answer == "這是測試答案"
         
         # 驗證 mock 被呼叫
-        mock_create.assert_called_once()
+        mock_client.chat.completions.create.assert_called_once()
     
-    @patch('app.services.llm_service.openai.ChatCompletion.create')
-    def test_generate_summary(self, mock_create):
+    @patch('app.services.llm_service.OpenAI')
+    def test_generate_summary(self, mock_openai_class):
         """測試生成摘要"""
         from app.services.llm_service import LLMService
         
@@ -209,7 +216,10 @@ class TestLLMServiceMock:
         mock_response = Mock()
         mock_response.choices = [Mock()]
         mock_response.choices[0].message.content = "這是摘要"
-        mock_create.return_value = mock_response
+        
+        mock_client = Mock()
+        mock_client.chat.completions.create.return_value = mock_response
+        mock_openai_class.return_value = mock_client
         
         # 初始化服務
         service = LLMService(api_key="test-key")
