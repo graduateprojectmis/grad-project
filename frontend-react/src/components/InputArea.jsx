@@ -44,7 +44,7 @@ function InputArea({
       if (selectedImage) {
         if (enableAnnotation) {
           // 進行圖片標註
-          onSendMessage(`� 正在標註圖片：${selectedImage.name}（偵測目標：${targetItem}）...`)
+          onSendMessage(`🏷️ 正在標註圖片：${selectedImage.name}（偵測目標：${targetItem}）...`)
           
           const annotationData = await annotateImage(selectedImage, targetItem)
           
@@ -56,10 +56,11 @@ function InputArea({
           })
           
           if (annotationData.annotated_images && annotationData.annotated_images.length > 0) {
-            resultMessage += `<br>已儲存 ${annotationData.annotated_images.length} 個標註圖片`
+            resultMessage += `<br>已產生 ${annotationData.annotated_images.length} 個標註圖片`
           }
           
-          onReceiveMessage(resultMessage)
+          // 傳遞標註圖片的路徑
+          onReceiveMessage(resultMessage, annotationData.annotated_images || [])
         } else {
           // 單純上傳圖片
           onSendMessage(`�📤 正在上傳圖片：${selectedImage.name}...`)

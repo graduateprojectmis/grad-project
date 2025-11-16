@@ -372,6 +372,7 @@ async def clear_api_key():
 # ========== 圖片上傳與標註 API ==========
 
 from fastapi import UploadFile, File, Form
+from fastapi.responses import FileResponse
 import shutil
 
 
@@ -509,6 +510,40 @@ async def annotate_image(
         raise HTTPException(
             status_code=500,
             detail=f"標註圖片時發生錯誤：{str(e)}"
+        )
+
+
+@app.get("/api/annotated-images/{filename}")
+async def get_annotated_image(filename: str):
+    """
+    取得標註後的圖片檔案
+    """
+    try:
+        from urllib.parse import quote
+        
+        output_dir = settings.output_dir / "Annotated_Image"
+        file_path = output_dir / filename
+        
+        if not file_path.exists():
+            raise HTTPException(status_code=404, detail="找不到圖片檔案")
+        
+        # 使用 RFC 5987 編碼來支援中文檔名
+        encoded_filename = quote(filename)
+        
+        return FileResponse(
+            path=str(file_path),
+            media_type="image/png",
+            headers={
+                "Content-Disposition": f"inline; filename*=UTF-8''{encoded_filename}"
+            }
+        )
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"讀取標註圖片時發生錯誤：{e}")
+        raise HTTPException(
+            status_code=500,
+            detail=f"讀取標註圖片時發生錯誤：{str(e)}"
         )
 
 

@@ -25,6 +25,7 @@ function ChatContainer({ messages, children }) {
               isUser={message.isUser}
               type={message.type}
               isLoading={message.isLoading}
+              annotatedImages={message.annotatedImages}
             />
           ))}
         </div>

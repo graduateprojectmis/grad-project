@@ -54,11 +54,12 @@ function App() {
     }])
   }
 
-  const handleReceiveMessage = (answer) => {
+  const handleReceiveMessage = (answer, annotatedImages = []) => {
     setMessages(prev => [...prev, {
       id: Date.now(),
       content: answer,
-      isUser: false
+      isUser: false,
+      annotatedImages: annotatedImages
     }])
   }
 
