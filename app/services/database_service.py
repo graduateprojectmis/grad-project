@@ -145,6 +145,57 @@ class DatabaseService:
             logger.error(f"清空集合時發生錯誤：{e}")
             raise DatabaseError(f"清空集合失敗：{str(e)}")
     
+    def switch_collection(self, collection_name: str) -> None:
+        """
+        切換到不同的集合
+        
+        Args:
+            collection_name: 集合名稱
+        """
+        try:
+            logger.info(f"正在切換到集合：{collection_name}")
+            self.collection_name = collection_name
+            self.collection = self.client.get_or_create_collection(
+                name=collection_name
+            )
+            logger.info(
+                f"成功切換到集合：{collection_name}，"
+                f"文件數量：{self.collection.count()}"
+            )
+        except Exception as e:
+            logger.error(f"切換集合時發生錯誤：{e}")
+            raise DatabaseError(f"切換集合失敗：{str(e)}")
+    
+    def list_collections(self) -> List[Dict[str, any]]:
+        """
+        列出所有可用的集合
+        
+        Returns:
+            集合資訊列表 [{"name": "collection_name", "count": 123}, ...]
+        """
+        try:
+            collections = self.client.list_collections()
+            result = []
+            for col in collections:
+                result.append({
+                    "name": col.name,
+                    "count": col.count()
+                })
+            logger.info(f"找到 {len(result)} 個集合")
+            return result
+        except Exception as e:
+            logger.error(f"列出集合時發生錯誤：{e}")
+            raise DatabaseError(f"列出集合失敗：{str(e)}")
+    
+    def get_current_collection_name(self) -> str:
+        """
+        獲取當前集合名稱
+        
+        Returns:
+            集合名稱
+        """
+        return self.collection_name
+    
     def close(self) -> None:
         """關閉資料庫連接"""
         logger.info("關閉 ChromaDB 連接")

@@ -22,7 +22,11 @@ from app.models import (
     HealthResponse,
     ImageAnnotationRequest,
     ImageAnnotationResponse,
-    DetectedObjectResponse
+    DetectedObjectResponse,
+    CollectionsResponse,
+    CollectionInfo,
+    SwitchCollectionRequest,
+    SwitchCollectionResponse
 )
 from app import __version__
 
@@ -173,6 +177,80 @@ async def health_check():
     except Exception as e:
         logger.error(f"健康檢查失敗：{e}")
         raise HTTPException(status_code=503, detail="服務不可用")
+
+
+@app.get("/api/collections", response_model=CollectionsResponse)
+async def get_collections():
+    """
+    獲取所有可用的 collections
+    """
+    try:
+        if not db_service:
+            raise HTTPException(status_code=503, detail="資料庫服務未初始化")
+        
+        collections = db_service.list_collections()
+        current_collection = db_service.get_current_collection_name()
+        
+        collection_info = [
+            CollectionInfo(name=col["name"], count=col["count"])
+            for col in collections
+        ]
+        
+        logger.info(f"返回 {len(collection_info)} 個 collections")
+        
+        return CollectionsResponse(
+            status="success",
+            current_collection=current_collection,
+            collections=collection_info
+        )
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"獲取 collections 時發生錯誤：{e}", exc_info=True)
+        raise HTTPException(
+            status_code=500,
+            detail=f"獲取 collections 時發生錯誤：{str(e)}"
+        )
+
+
+@app.post("/api/switch-collection", response_model=SwitchCollectionResponse)
+async def switch_collection(request: SwitchCollectionRequest):
+    """
+    切換到不同的 collection
+    """
+    try:
+        if not db_service:
+            raise HTTPException(status_code=503, detail="資料庫服務未初始化")
+        
+        collection_name = request.collection_name.strip()
+        
+        if not collection_name:
+            raise HTTPException(status_code=400, detail="Collection 名稱不能為空")
+        
+        logger.info(f"正在切換到 collection：{collection_name}")
+        
+        # 切換 collection
+        db_service.switch_collection(collection_name)
+        
+        # 獲取文件數量
+        doc_count = db_service.count()
+        
+        logger.info(f"成功切換到 collection：{collection_name}，文件數量：{doc_count}")
+        
+        return SwitchCollectionResponse(
+            status="success",
+            message=f"已切換到 {collection_name}",
+            current_collection=collection_name,
+            document_count=doc_count
+        )
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"切換 collection 時發生錯誤：{e}", exc_info=True)
+        raise HTTPException(
+            status_code=500,
+            detail=f"切換 collection 時發生錯誤：{str(e)}"
+        )
 
 
 @app.post("/api/ask", response_model=QuestionResponse)

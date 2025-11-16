@@ -1,7 +1,14 @@
 import { Home, Settings } from 'lucide-react'
+import ProductSelector from './ProductSelector'
 import './Header.css'
 
-function Header({ isConnected, dbCount, onSettingsClick, onHomeClick }) {
+function Header({ 
+  isConnected, 
+  dbCount, 
+  onSettingsClick, 
+  onHomeClick,
+  onCollectionChange 
+}) {
   return (
     <div className="header">
       <div className="header-content">
@@ -15,6 +22,11 @@ function Header({ isConnected, dbCount, onSettingsClick, onHomeClick }) {
         </button>
         
         <h1>🎧 AirPods 智慧助手</h1>
+        
+        <ProductSelector 
+          isConnected={isConnected}
+          onCollectionChange={onCollectionChange}
+        />
         
         <div className="settings-group">
           <button 

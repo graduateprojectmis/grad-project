@@ -14,6 +14,7 @@ function App() {
   const [showApiKeyModal, setShowApiKeyModal] = useState(false)
   const [showWelcome, setShowWelcome] = useState(true)
   const [dbCount, setDbCount] = useState(0)
+  const [currentCollection, setCurrentCollection] = useState('')
 
   useEffect(() => {
     // 初始檢查
@@ -74,6 +75,15 @@ function App() {
   const handleGoHome = () => {
     setMessages([])
     setShowWelcome(true)
+  }
+
+  const handleCollectionChange = (collectionName, documentCount) => {
+    setCurrentCollection(collectionName)
+    setDbCount(documentCount)
+    // 切換 collection 後清空訊息並返回首頁
+    setMessages([])
+    setShowWelcome(true)
+    console.log(`已切換到：${collectionName}，文件數：${documentCount}`)
   }
 
   const handleExampleClick = async (question) => {
@@ -143,6 +153,7 @@ function App() {
         dbCount={dbCount}
         onSettingsClick={() => setShowApiKeyModal(true)}
         onHomeClick={handleGoHome}
+        onCollectionChange={handleCollectionChange}
       />
       
       <ChatContainer messages={messages}>

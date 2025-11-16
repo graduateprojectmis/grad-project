@@ -109,3 +109,36 @@ class ImageAnnotationResponse(BaseModel):
     total_detected: int = Field(..., description="偵測到的物件總數")
     objects: List[DetectedObjectResponse] = Field(..., description="偵測到的物件列表")
     annotated_images: List[str] = Field(default_factory=list, description="標註圖片檔案路徑")
+
+
+class CollectionInfo(BaseModel):
+    """Collection 資訊"""
+    name: str = Field(..., description="Collection 名稱")
+    count: int = Field(..., description="文件數量")
+
+
+class CollectionsResponse(BaseModel):
+    """Collections 列表回應"""
+    status: str = Field(default="success", description="狀態")
+    current_collection: str = Field(..., description="當前使用的 collection")
+    collections: List[CollectionInfo] = Field(..., description="可用的 collections 列表")
+
+
+class SwitchCollectionRequest(BaseModel):
+    """切換 Collection 請求"""
+    collection_name: str = Field(..., min_length=1, description="要切換的 collection 名稱")
+    
+    model_config = {"json_schema_extra": {
+        "examples": [{
+            "collection_name": "airpods_manual"
+        }]
+    }}
+
+
+class SwitchCollectionResponse(BaseModel):
+    """切換 Collection 回應"""
+    status: str = Field(default="success", description="狀態")
+    message: str = Field(..., description="訊息")
+    current_collection: str = Field(..., description="當前使用的 collection")
+    document_count: int = Field(..., description="文件數量")
+

@@ -12,6 +12,10 @@ from .schemas import (
     ImageAnnotationRequest,
     ImageAnnotationResponse,
     DetectedObjectResponse,
+    CollectionsResponse,
+    CollectionInfo,
+    SwitchCollectionRequest,
+    SwitchCollectionResponse,
 )
 
 __all__ = [
@@ -27,4 +31,8 @@ __all__ = [
     "ImageAnnotationRequest",
     "ImageAnnotationResponse",
     "DetectedObjectResponse",
+    "CollectionsResponse",
+    "CollectionInfo",
+    "SwitchCollectionRequest",
+    "SwitchCollectionResponse",
 ]
