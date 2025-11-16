@@ -17,11 +17,11 @@ python-dotenv==1.1.1
 chromadb==1.1.1
 
 # OpenAI
-openai==0.28.0
+openai==2.8
 
 # Google Generative AI (Gemini)
 google-generativeai==0.8.5
-google-genai==0.3.0
+google-genai==1.50.1
 
 # PIL/Pillow for image processing
 Pillow==11.1.0
@@ -29,7 +29,6 @@ Pillow==11.1.0
 # 文字處理
 langchain-text-splitters==0.3.11
 beautifulsoup4==4.14.2
-bs4==0.0.2
 
 # HTTP 請求
 requests==2.32.5
