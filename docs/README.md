@@ -256,11 +256,3 @@ docs/
 1. **新手** → 閱讀 [PROJECT_GUIDE.md](./PROJECT_GUIDE.md)
 2. **開發者** → 參考 [ARCHITECTURE.md](./ARCHITECTURE.md) 和 [TESTING.md](./TESTING.md)
 3. **使用者** → 查看 [IMAGE_ANNOTATION_GUIDE.md](./IMAGE_ANNOTATION_GUIDE.md) 或 [REACT_GUIDE.md](./REACT_GUIDE.md)
-
-**開始探索吧！** 🎉
-
----
-
-**文檔維護者**: 專案團隊  
-**版本**: 2.0  
-**最後整理**: 2025-11-14

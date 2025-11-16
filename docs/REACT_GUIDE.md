@@ -452,12 +452,6 @@ export const myNewApi = async (data) => {
 
 ## 重構報告
 
-### 重構摘要
-
-**任務**: 將傳統 HTML/CSS/JS 前端重構為 React 應用  
-**狀態**: ✅ 完成  
-**完成時間**: 2025-11-07
-
 ### 主要改進
 
 | 特性 | 舊版 (HTML/JS) | 新版 (React) | 改進 |
@@ -799,19 +793,3 @@ docker run -p 80:80 airpods-qa-frontend
 - [Lucide Icons](https://lucide.dev/)
 
 ---
-
-## 授權
-
-MIT License
-
----
-
-**🎉 享受 React 的開發體驗！**
-
-**版本**: 2.0  
-**更新日期**: 2025-11-14  
-**狀態**: ✅ 生產就緒
-
----
-
-*快速開始，高效開發！* ⚛️✨

@@ -775,19 +775,3 @@ async def async_annotate_batch(image_paths, target_item="objects"):
 - `test_image_annotation.py` - 測試腳本
 
 ---
-
-## 授權
-
-MIT License
-
----
-
-**🎉 開始使用智慧圖片標註功能！**
-
-**版本**: 1.0  
-**更新日期**: 2025-11-14  
-**狀態**: ✅ 穩定
-
----
-
-*享受 AI 驅動的圖片標註體驗！* 🚀
