@@ -2,6 +2,7 @@
 向量嵌入服務
 支援 OpenAI 和 Google Gemini
 """
+
 from typing import List, Union
 from abc import ABC, abstractmethod
 from openai import OpenAI
@@ -14,6 +15,7 @@ from app.config import get_settings
 
 logger = get_logger(__name__)
 
+
 class BaseEmbeddingService(ABC):
     """嵌入服務基礎類別"""
 
@@ -21,10 +23,10 @@ class BaseEmbeddingService(ABC):
     def generate_embedding(self, text: Union[str, List[str]]) -> List[List[float]]:
         """
         生成嵌入向量
-        
+
         Args:
             text: 單一文字或文字列表
-            
+
         Returns:
             嵌入向量列表
         """
@@ -37,7 +39,7 @@ class OpenAIEmbeddingService(BaseEmbeddingService):
     def __init__(self, api_key: str = None, model: str = None):
         """
         初始化 OpenAI 嵌入服務
-        
+
         Args:
             api_key: OpenAI API Key
             model: 模型名稱
@@ -48,7 +50,7 @@ class OpenAIEmbeddingService(BaseEmbeddingService):
 
         if not self.api_key:
             raise APIKeyError("OpenAI API Key 未設定")
-        
+
         self.client = OpenAI(api_key=self.api_key)
 
         logger.info(f"OpenAI 嵌入服務已初始化，使用模型：{self.model}")
@@ -56,10 +58,10 @@ class OpenAIEmbeddingService(BaseEmbeddingService):
     def generate_embedding(self, text: Union[str, List[str]]) -> List[List[float]]:
         """
         生成 OpenAI 嵌入向量
-        
+
         Args:
             text: 單一文字或文字列表
-            
+
         Returns:
             嵌入向量列表
         """
@@ -70,8 +72,7 @@ class OpenAIEmbeddingService(BaseEmbeddingService):
 
             logger.debug(f"正在生成 {len(text)} 個文字的嵌入向量")
 
-            response = self.client.embeddings.create(model=self.model,
-            input=text)
+            response = self.client.embeddings.create(model=self.model, input=text)
 
             embeddings = [item.embedding for item in response.data]
             logger.debug(f"成功生成 {len(embeddings)} 個嵌入向量")
@@ -89,7 +90,7 @@ class GeminiEmbeddingService(BaseEmbeddingService):
     def __init__(self, api_key: str = None, model: str = "models/embedding-001"):
         """
         初始化 Gemini 嵌入服務
-        
+
         Args:
             api_key: Google API Key
             model: 模型名稱
@@ -107,10 +108,10 @@ class GeminiEmbeddingService(BaseEmbeddingService):
     def generate_embedding(self, text: Union[str, List[str]]) -> List[List[float]]:
         """
         生成 Gemini 嵌入向量
-        
+
         Args:
             text: 單一文字或文字列表
-            
+
         Returns:
             嵌入向量列表
         """
@@ -124,11 +125,9 @@ class GeminiEmbeddingService(BaseEmbeddingService):
             embeddings = []
             for t in text:
                 result = genai.embed_content(
-                    model=self.model,
-                    content=t,
-                    task_type="retrieval_document"
+                    model=self.model, content=t, task_type="retrieval_document"
                 )
-                embeddings.append(result['embedding'])
+                embeddings.append(result["embedding"])
 
             logger.debug(f"成功生成 {len(embeddings)} 個嵌入向量")
 
@@ -145,7 +144,7 @@ class EmbeddingService:
     def __init__(self, provider: str = "openai", **kwargs):
         """
         初始化嵌入服務
-        
+
         Args:
             provider: 服務提供者 ('openai' 或 'gemini')
             **kwargs: 傳遞給具體服務的參數
@@ -164,10 +163,10 @@ class EmbeddingService:
     def generate_embedding(self, text: Union[str, List[str]]) -> List[List[float]]:
         """
         生成嵌入向量
-        
+
         Args:
             text: 單一文字或文字列表
-            
+
         Returns:
             嵌入向量列表
         """

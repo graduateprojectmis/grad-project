@@ -1,6 +1,7 @@
 """
 測試配置和共用 fixtures
 """
+
 import pytest
 import os
 import sys
@@ -15,6 +16,7 @@ sys.path.insert(0, str(project_root))
 def settings():
     """測試設定"""
     from app.config import get_settings
+
     return get_settings()
 
 
@@ -30,18 +32,14 @@ def sample_texts():
     return [
         "如何配對 AirPods 到 iPhone？",
         "AirPods 的電池壽命有多長？",
-        "怎麼重置 AirPods？"
+        "怎麼重置 AirPods？",
     ]
 
 
 @pytest.fixture
 def sample_embeddings():
     """測試用的嵌入向量（假資料）"""
-    return [
-        [0.1] * 1536,  # OpenAI embedding dimension
-        [0.2] * 1536,
-        [0.3] * 1536
-    ]
+    return [[0.1] * 1536, [0.2] * 1536, [0.3] * 1536]  # OpenAI embedding dimension
 
 
 @pytest.fixture

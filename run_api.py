@@ -1,6 +1,7 @@
 """
 啟動 API 伺服器
 """
+
 import sys
 from pathlib import Path
 
@@ -19,5 +20,5 @@ if __name__ == "__main__":
         host=settings.api_host,
         port=settings.api_port,
         reload=settings.api_reload,
-        log_level=settings.log_level.lower()
+        log_level=settings.log_level.lower(),
     )

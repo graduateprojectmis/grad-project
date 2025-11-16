@@ -1,11 +1,12 @@
 """核心功能模組"""
+
 from .logger import setup_logger, get_logger
 from .exceptions import (
     AppException,
     DatabaseError,
     EmbeddingError,
     APIKeyError,
-    ValidationError
+    ValidationError,
 )
 
 __all__ = [
@@ -15,5 +16,5 @@ __all__ = [
     "DatabaseError",
     "EmbeddingError",
     "APIKeyError",
-    "ValidationError"
+    "ValidationError",
 ]
