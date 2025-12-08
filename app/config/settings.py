@@ -22,6 +22,10 @@ class Settings(BaseSettings):
     openai_embedding_model: str = "text-embedding-3-small"
     openai_temperature: float = 0.3
 
+    # Gemini 設定
+    gemini_model: str = "gemini-2.0-flash"
+    gemini_temperature: float = 0.3
+
     # ChromaDB 設定
     chroma_db_path: str = "./data/chroma_db"
     chroma_collection_name: str = "airpods_manual"

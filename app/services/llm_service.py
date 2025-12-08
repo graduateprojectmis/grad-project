@@ -127,3 +127,98 @@ class LLMService:
         except Exception as e:
             logger.error(f"生成摘要時發生錯誤：{e}")
             raise Exception(f"生成摘要失敗：{str(e)}")
+
+
+class QueryDecompositionService:
+    """問題拆解服務 - 使用 Gemini 模型"""
+
+    DECOMPOSITION_PROMPT = """You are an expert Query Decomposition Engine for a RAG (Retrieval-Augmented Generation) system. 
+
+Your task is to analyze the user's input query and break it down into 3 to 5 distinct, high-quality sub-queries to maximize search retrieval accuracy.
+
+# Rules:
+1. Break down complex logic into simpler, retrieval-friendly facts.
+2. If the query involves comparison, generate separate queries for each entity.
+3. Make implicit context explicit (e.g., clarify "it", "latest", or specific versions).
+4. Use synonyms or technical terms where appropriate to broaden coverage.
+5. Maintain the same language as the user's input query.
+
+# Output Format:
+- Return ONLY a raw JSON list of strings.
+- Format: ["sub-query 1", "sub-query 2", "sub-query 3"]
+- Do NOT use markdown code blocks (no ```json).
+- Do NOT include any introductory or concluding text.
+- Do NOT output the original query.
+
+Input:
+"""
+
+    def __init__(self, api_key: str = None, model: str = None):
+        """
+        初始化問題拆解服務
+
+        Args:
+            api_key: Google API Key
+            model: Gemini 模型名稱
+        """
+        try:
+            import google.generativeai as genai
+        except ImportError:
+            raise ImportError("請安裝 google-generativeai 套件：pip install google-generativeai")
+
+        settings = get_settings()
+        self.api_key = api_key or settings.google_api_key
+        self.model = model or settings.gemini_model
+        self.temperature = settings.gemini_temperature
+
+        if not self.api_key:
+            raise APIKeyError("Google API Key 未設定")
+
+        genai.configure(api_key=self.api_key)
+        self.client = genai.GenerativeModel(self.model)
+
+        logger.info(f"問題拆解服務已初始化，使用模型：{self.model}")
+
+    def decompose_query(self, query: str, temperature: Optional[float] = None) -> List[str]:
+        """
+        將使用者查詢拆解為多個子查詢
+
+        Args:
+            query: 使用者原始查詢
+            temperature: 溫度參數
+
+        Returns:
+            拆解後的子查詢列表
+        """
+        import json
+
+        try:
+            temp = temperature if temperature is not None else self.temperature
+            prompt = self.DECOMPOSITION_PROMPT + query
+
+            logger.debug(f"正在拆解查詢：{query}")
+
+            response = self.client.generate_content(
+                prompt,
+                generation_config={"temperature": temp}
+            )
+
+            result_text = response.text.strip()
+            
+            # 解析 JSON 結果
+            sub_queries = json.loads(result_text)
+
+            if not isinstance(sub_queries, list):
+                raise ValueError("回應格式錯誤，預期為列表")
+
+            logger.debug(f"查詢拆解完成，產生 {len(sub_queries)} 個子查詢")
+            logger.info(f"子查詢列表：{sub_queries}")
+
+            return sub_queries
+
+        except json.JSONDecodeError as e:
+            logger.error(f"解析 JSON 時發生錯誤：{e}，原始回應：{result_text}")
+            raise Exception(f"問題拆解失敗：回應格式錯誤")
+        except Exception as e:
+            logger.error(f"拆解查詢時發生錯誤：{e}")
+            raise Exception(f"問題拆解失敗：{str(e)}")
