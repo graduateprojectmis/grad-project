@@ -1,0 +1,161 @@
+<mxfile host="app.diagrams.net" agent="Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36" version="29.1.0">
+  <diagram name="第 1 页" id="AtyhB1at_OpmsBXmk405">
+    <mxGraphModel dx="2562" dy="979" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="Aaa_C5mEjyUvGLqL7Xu0-1" parent="1" style="whiteSpace=wrap;strokeWidth=2;" value="使用者" vertex="1">
+          <mxGeometry height="54" width="108" x="390" y="80" as="geometry" />
+        </mxCell>
+        <mxCell id="Aaa_C5mEjyUvGLqL7Xu0-2" parent="1" style="whiteSpace=wrap;strokeWidth=2;" value="OpenAI LLM API" vertex="1">
+          <mxGeometry height="54" width="138" x="550" y="500" as="geometry" />
+        </mxCell>
+        <mxCell id="Aaa_C5mEjyUvGLqL7Xu0-3" parent="1" style="whiteSpace=wrap;strokeWidth=2;" value="Google Vision API" vertex="1">
+          <mxGeometry height="54" width="183" x="767" y="500" as="geometry" />
+        </mxCell>
+        <mxCell id="Aaa_C5mEjyUvGLqL7Xu0-8" edge="1" parent="1" source="Aaa_C5mEjyUvGLqL7Xu0-1" style="startArrow=none;endArrow=block;exitX=0;exitY=0.75;entryX=0.5;entryY=0;rounded=0;entryDx=0;entryDy=0;exitDx=0;exitDy=0;" target="Aaa_C5mEjyUvGLqL7Xu0-26" value="上傳文件">
+          <mxGeometry relative="1" x="-0.0004" as="geometry">
+            <mxPoint as="offset" />
+            <Array as="points">
+              <mxPoint x="209" y="120" />
+            </Array>
+            <mxPoint x="228.5" y="240" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="Aaa_C5mEjyUvGLqL7Xu0-9" edge="1" parent="1" source="Aaa_C5mEjyUvGLqL7Xu0-24" style="startArrow=none;endArrow=block;exitX=0.75;exitY=1;entryX=0.25;entryY=0;rounded=0;entryDx=0;entryDy=0;exitDx=0;exitDy=0;" target="Aaa_C5mEjyUvGLqL7Xu0-3" value="LLM回答+圖片">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points" />
+            <mxPoint x="229.51248773167663" y="318.9870215353876" as="sourcePoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="Aaa_C5mEjyUvGLqL7Xu0-10" edge="1" parent="1" source="Aaa_C5mEjyUvGLqL7Xu0-3" style="startArrow=none;endArrow=block;exitX=0.656;exitY=-0.005;rounded=0;exitDx=0;exitDy=0;exitPerimeter=0;entryX=1;entryY=1;entryDx=0;entryDy=0;" target="Aaa_C5mEjyUvGLqL7Xu0-24" value="圖片標記座標">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="859" y="400" />
+            </Array>
+            <mxPoint x="180" y="320" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="Aaa_C5mEjyUvGLqL7Xu0-11" edge="1" parent="1" source="Aaa_C5mEjyUvGLqL7Xu0-26" style="startArrow=none;endArrow=block;exitX=0.75;exitY=1;entryX=0;entryY=0.75;rounded=0;exitDx=0;exitDy=0;entryDx=0;entryDy=0;" target="Aaa_C5mEjyUvGLqL7Xu0-38" value="Embedding 請求">
+          <mxGeometry relative="1" x="0.2487" as="geometry">
+            <mxPoint as="offset" />
+            <Array as="points">
+              <mxPoint x="237" y="552" />
+            </Array>
+            <mxPoint x="266.98845222995806" y="288.3819505146057" as="sourcePoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="Aaa_C5mEjyUvGLqL7Xu0-12" edge="1" parent="1" source="Aaa_C5mEjyUvGLqL7Xu0-38" style="startArrow=none;endArrow=block;exitX=0;exitY=0.25;rounded=0;exitDx=0;exitDy=0;" value="向量數據">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="260" y="524" />
+            </Array>
+            <mxPoint x="260" y="320" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="Aaa_C5mEjyUvGLqL7Xu0-13" edge="1" parent="1" source="Aaa_C5mEjyUvGLqL7Xu0-26" style="startArrow=none;endArrow=block;exitX=1;exitY=0.5;entryX=0.224;entryY=0.014;rounded=0;entryDx=0;entryDy=0;exitDx=0;exitDy=0;entryPerimeter=0;" target="Aaa_C5mEjyUvGLqL7Xu0-33" value="儲存向量">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="350" y="280" />
+            </Array>
+            <mxPoint x="198.72597716862356" y="305.4568404170973" as="sourcePoint" />
+            <mxPoint x="186.57999999999993" y="694" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="Aaa_C5mEjyUvGLqL7Xu0-14" edge="1" parent="1" source="Aaa_C5mEjyUvGLqL7Xu0-1" style="startArrow=none;endArrow=block;exitX=1;exitY=0.75;entryX=0.272;entryY=-0.006;rounded=0;entryDx=0;entryDy=0;exitDx=0;exitDy=0;entryPerimeter=0;" target="Aaa_C5mEjyUvGLqL7Xu0-24" value="問題/圖片">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="670" y="120" />
+            </Array>
+            <mxPoint x="467.43071785686834" y="591.5692821431317" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="Aaa_C5mEjyUvGLqL7Xu0-15" edge="1" parent="1" source="Aaa_C5mEjyUvGLqL7Xu0-24" style="startArrow=none;endArrow=block;exitX=0;exitY=0.25;entryX=0.5;entryY=0;rounded=0;exitDx=0;exitDy=0;entryDx=0;entryDy=0;" target="Aaa_C5mEjyUvGLqL7Xu0-33" value="查詢向量">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="385" y="280" />
+            </Array>
+            <mxPoint x="401.01154777004194" y="628.3819505146057" as="sourcePoint" />
+            <mxPoint x="253.84000000000015" y="694" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="Aaa_C5mEjyUvGLqL7Xu0-16" edge="1" parent="1" source="Aaa_C5mEjyUvGLqL7Xu0-33" style="startArrow=none;endArrow=block;exitX=0.767;exitY=0.011;entryX=0;entryY=0.75;rounded=0;entryDx=0;entryDy=0;exitDx=0;exitDy=0;exitPerimeter=0;" target="Aaa_C5mEjyUvGLqL7Xu0-24" value="檢索結果">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="420" y="320" />
+            </Array>
+            <mxPoint x="268" y="706" as="sourcePoint" />
+            <mxPoint x="411.56928214313166" y="647.4307178568683" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="Aaa_C5mEjyUvGLqL7Xu0-17" edge="1" parent="1" source="Aaa_C5mEjyUvGLqL7Xu0-24" style="startArrow=none;endArrow=block;exitX=0.5;exitY=1;entryX=0.75;entryY=0;rounded=0;exitDx=0;exitDy=0;entryDx=0;entryDy=0;" target="Aaa_C5mEjyUvGLqL7Xu0-2" value="檢索結果+問題">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points" />
+            <mxPoint x="448.98" y="581.027" as="sourcePoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="Aaa_C5mEjyUvGLqL7Xu0-18" edge="1" parent="1" source="Aaa_C5mEjyUvGLqL7Xu0-2" style="startArrow=none;endArrow=block;exitX=0.25;exitY=0;entryX=0.25;entryY=1;rounded=0;entryDx=0;entryDy=0;exitDx=0;exitDy=0;" target="Aaa_C5mEjyUvGLqL7Xu0-24" value="LLM 回答">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="580" y="380" />
+            </Array>
+            <mxPoint x="409.3462417279129" y="593.9852814620799" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="Aaa_C5mEjyUvGLqL7Xu0-19" edge="1" parent="1" source="Aaa_C5mEjyUvGLqL7Xu0-24" style="startArrow=none;endArrow=block;exitX=0.75;exitY=0;entryX=1;entryY=0.25;rounded=0;exitDx=0;exitDy=0;entryDx=0;entryDy=0;" target="Aaa_C5mEjyUvGLqL7Xu0-1" value="最終回答">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="723" y="94" />
+            </Array>
+            <mxPoint x="474.647789781141" y="601.4754924199274" as="sourcePoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="Aaa_C5mEjyUvGLqL7Xu0-20" edge="1" parent="1" source="Aaa_C5mEjyUvGLqL7Xu0-24" style="startArrow=none;endArrow=block;exitX=1;exitY=0.75;entryX=0;entryY=0.75;rounded=0;entryDx=0;entryDy=0;exitDx=0;exitDy=0;" target="Aaa_C5mEjyUvGLqL7Xu0-22" value="本次對話">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="601.5627063230531" y="648.1943066751155" as="sourcePoint" />
+            <mxPoint x="828.1913524303086" y="795.4164249463911" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="Aaa_C5mEjyUvGLqL7Xu0-21" edge="1" parent="1" source="Aaa_C5mEjyUvGLqL7Xu0-22" style="startArrow=none;endArrow=block;exitX=0;exitY=0.25;entryX=1;entryY=0.25;rounded=0;exitDx=0;exitDy=0;entryDx=0;entryDy=0;" target="Aaa_C5mEjyUvGLqL7Xu0-24" value="歷史 Context">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="859.5" y="780" as="sourcePoint" />
+            <mxPoint x="638.8975702059479" y="635.8824348002095" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="Aaa_C5mEjyUvGLqL7Xu0-22" parent="1" style="swimlane;whiteSpace=wrap;html=1;rounded=1;" value="3.0" vertex="1">
+          <mxGeometry height="80" width="110" x="840" y="260" as="geometry" />
+        </mxCell>
+        <mxCell id="Aaa_C5mEjyUvGLqL7Xu0-23" parent="Aaa_C5mEjyUvGLqL7Xu0-22" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;" value="&lt;div&gt;聊天記錄&lt;/div&gt;&lt;div&gt;管理系統&lt;/div&gt;" vertex="1">
+          <mxGeometry height="40" width="70" x="19.5" y="30" as="geometry" />
+        </mxCell>
+        <mxCell id="Aaa_C5mEjyUvGLqL7Xu0-24" parent="1" style="swimlane;whiteSpace=wrap;html=1;rounded=1;" value="2.0" vertex="1">
+          <mxGeometry height="80" width="110" x="640" y="260" as="geometry" />
+        </mxCell>
+        <mxCell id="Aaa_C5mEjyUvGLqL7Xu0-29" parent="Aaa_C5mEjyUvGLqL7Xu0-24" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;" value="問答檢索系統" vertex="1">
+          <mxGeometry height="30" width="100" x="5" y="35" as="geometry" />
+        </mxCell>
+        <mxCell id="Aaa_C5mEjyUvGLqL7Xu0-26" parent="1" style="swimlane;whiteSpace=wrap;html=1;rounded=1;" value="1.0" vertex="1">
+          <mxGeometry height="80" width="110" x="154" y="240" as="geometry" />
+        </mxCell>
+        <mxCell id="Aaa_C5mEjyUvGLqL7Xu0-30" parent="Aaa_C5mEjyUvGLqL7Xu0-26" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;" value="&lt;div&gt;知識庫建構系統&lt;/div&gt;" vertex="1">
+          <mxGeometry height="30" width="110" y="40" as="geometry" />
+        </mxCell>
+        <mxCell id="Aaa_C5mEjyUvGLqL7Xu0-32" connectable="0" parent="1" style="group" value="" vertex="1">
+          <mxGeometry height="50" width="140" x="310" y="390" as="geometry" />
+        </mxCell>
+        <mxCell id="Aaa_C5mEjyUvGLqL7Xu0-33" parent="Aaa_C5mEjyUvGLqL7Xu0-32" style="html=1;dashed=0;whiteSpace=wrap;shape=mxgraph.dfd.dataStoreID;align=left;spacingLeft=3;points=[[0,0],[0.5,0],[1,0],[0,0.5],[1,0.5],[0,1],[0.5,1],[1,1]];" value="" vertex="1">
+          <mxGeometry height="46.26865671641791" width="130" x="10" y="3.731343283582089" as="geometry" />
+        </mxCell>
+        <mxCell id="Aaa_C5mEjyUvGLqL7Xu0-34" parent="Aaa_C5mEjyUvGLqL7Xu0-32" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;" value="D1" vertex="1">
+          <mxGeometry height="30" width="40" as="geometry" />
+        </mxCell>
+        <mxCell id="Aaa_C5mEjyUvGLqL7Xu0-35" parent="Aaa_C5mEjyUvGLqL7Xu0-32" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontStyle=0" value="向量資料庫" vertex="1">
+          <mxGeometry height="30" width="80" x="40" y="10.000447761194028" as="geometry" />
+        </mxCell>
+        <mxCell id="Aaa_C5mEjyUvGLqL7Xu0-38" parent="1" style="whiteSpace=wrap;strokeWidth=2;" value="OpenAI Embedding API" vertex="1">
+          <mxGeometry height="54" width="138" x="311" y="510" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
