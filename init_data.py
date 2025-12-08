@@ -14,7 +14,7 @@ from app.config import get_settings
 from app.core.logger import setup_logger, get_logger
 from app.services import DatabaseService, EmbeddingService
 from app.utils import split_text, save_json
-from app.services.airpods_manual_fetcher_service import scrape_airpods_manual
+from app.services.airpods_manual_fetcher_service import AirpodsManualFetcher
 
 # 初始化設定和日誌
 settings = get_settings()
@@ -31,7 +31,8 @@ def main():
     # 1. 抓取資料
     logger.info("步驟 1/4: 正在抓取 AirPods 使用手冊...")
     url = "https://support.apple.com/en-us/guide/airpods/welcome/web"
-    raw_data = scrape_airpods_manual(url)
+    fetcher = AirpodsManualFetcher
+    raw_data = fetcher.scrape_airpods_manual(url)
 
     if not raw_data:
         logger.error("抓取資料失敗，程式終止")
@@ -84,7 +85,7 @@ def main():
     # 批次生成嵌入向量
     logger.info("正在批次生成嵌入向量...")
     try:
-        all_embeddings = embedding_service.generate_embedding(texts_to_embed)
+        all_embeddings = embedding_service.generate_embedding_batch(texts_to_embed)
     except Exception as e:
         logger.error(f"生成嵌入向量失敗：{e}")
         return
